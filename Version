@@ -1,1 +1,8 @@
-
+return {
+Version = '1.0',
+DateUpdated = '4/10/2022',
+UpdateInformation = [[
+- Shutdown Button:
+Shuts down the Hub, You'll have to re-execute the script to get it back.
+]]
+}
