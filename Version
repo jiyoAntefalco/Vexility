@@ -2,5 +2,5 @@ Version = '1.1'
 DateUpdated = '4/10/2022'
 UpdateInformation = [[
 - Shutdown Button:
-Shuts down the Hub, You'll have to re-execute the script to get it back.
+Shuts down the Hub, You'll have to re-execute the script to get it back, Go to the GitHub page to get the script.
 ]]
