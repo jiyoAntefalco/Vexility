@@ -100,7 +100,7 @@ Cool.IsAllowed = true
 Keys.Minimize = nil
 
 Clipboards.CopyBtn1 = [[https://github.com/GioCruz11/Vexility]]
-Clipboards.CopyBtn2 = [[https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source]]
+Clipboards.CopyBtn2 = [[https://github.com/EdgeIY/]]
 
 Indexes.Result = 0
 
