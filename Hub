@@ -1,1 +1,1293 @@
-print('lol')
+local TweenService = game:GetService('TweenService')
+local RunService = game:GetService('RunService')
+local PlayersService = game:GetService('Players')
+local HttpService = game:GetService('HttpService')
+local UserInputService = game:GetService('UserInputService')
+local Lighting = game:GetService('Lighting')
+local Source = game:GetObjects('rbxassetid://9316886202')
+local LocalPlayer = PlayersService.LocalPlayer
+local GetMouse = LocalPlayer:GetMouse()
+
+local Out = Source[1]
+
+repeat wait(2) print('Finding Vex Admin....') until Out:FindFirstChild('VexAdmin') and Out:FindFirstChild('NotificationBox')
+
+Out.Parent = LocalPlayer.PlayerGui
+
+local VexAdmin = Out.VexAdmin
+local Settings = Out.Settings
+local GitHub = Out.GitHub
+local NotificationBox = Out.NotificationBox
+local NotificationUIs = NotificationBox.UIObjects
+
+local LoadedFrame = Out.LoadedFrame
+
+local R, G, B = Settings.Red, Settings.Green, Settings.Blue
+local PrefixBox = Settings.PrefixBox
+local MinimizeShortcutBox = Settings.MinimizeShortcutBox
+
+local UpdateInfo = Out.UpdateInfo
+local Time = Out.Time
+local PlayerProfile = Out.PlayerProfile
+local Buttons = Out.Buttons
+local MainProfile = PlayerProfile.MainProfile
+local ResultText = VexAdmin.ResultText
+local Profile = MainProfile.Profile
+
+local UserIdBackground = PlayerProfile.UserID
+local UserIDText = UserIdBackground.ID
+local AccountAge = PlayerProfile.AccountAge
+local AccAge = AccountAge.AccAge
+local FriendsCount = PlayerProfile.FriendsCount
+local TotalCount = FriendsCount.Count
+
+local CopyButtonOne = GitHub.CopyBtn1
+local CopyButtonTwo = GitHub.CopyBtn2
+
+local CommandList = VexAdmin.CommandList
+local UIObjects = VexAdmin.UIObjects
+
+local CommandFrame = VexAdmin.CommandFrame
+local CommandBox = CommandFrame.CommandBox
+
+local Encode = game:HttpGet('https://friends.roblox.com/v1/users/'..PlayersService.LocalPlayer.UserId..'/friends/count', true)
+
+local Prefixes = {}
+Prefixes.Prefix = (';')
+
+local Events = {}
+local Funcs = {}
+local Cool = {}
+local Keys = {}
+local Clipboards = {}
+local Indexes = {}
+local Commands = {}
+local Library = {}
+local Sizes = {
+	['GitHub'] = UDim2.new(0, 254, 0, 305),
+	['UpdateInfo'] = UDim2.new(0, 254, 0, 305),
+	['Time'] = UDim2.new(0, 254, 0, 305),
+	['PlayerProfile'] = UDim2.new(0, 254, 0, 305),
+	['VexAdmin'] = UDim2.new(0, 350, 0, 305),
+	['Settings'] = UDim2.new(0, 318,0, 305),
+	['Maximize'] = UDim2.new(0, 40,0, 320),
+	['Minimize'] = UDim2.new(0, 40,0, 40),
+	['Notification'] = UDim2.new(0, 245,0, 72),
+	['ClosedNotification'] = UDim2.new(0, 0,0, 72)
+}
+
+local Colors = {}
+
+local OldColor = Color3.fromRGB(179, 102, 249)
+
+local SelectedColor = nil
+local SelectingColors = false
+
+Cool.Buttons = false
+Cool.TpWalking = false
+Cool.Minimize = false
+Cool.DraggingEnabled = false
+Cool.NotificationEnabled = true
+Cool.PrefixFocused = false
+Cool.IsAllowed = true
+
+Keys.Minimize = nil
+
+Clipboards.CopyBtn1 = [[https://github.com/GioCruz11/GioCruz11]]
+Clipboards.CopyBtn2 = [[https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source]]
+
+Indexes.Result = 0
+
+Colors.R = nil
+Colors.G = nil
+Colors.B = nil
+
+Events.MinimizeFocusedEvent = nil
+Events.MinimizeShortcutEvent = nil
+Events.PrefixFocusedEvent = nil
+Events.CaptureFocusEvent = nil
+
+Library.Settings = {
+	textColor = Color3.fromRGB(255, 255, 255);
+	buttonColor = Color3.fromRGB(35, 35, 35);
+	buttonOutlineColor = Color3.fromRGB(50, 50, 50);
+	buttonOutlineSize = 1;
+	buttonHoverEnabled = false;
+	buttonModal = true;
+	defaultColorPickerColor = Color3.fromRGB(255, 255, 255);
+	sliderColor = Color3.new(0.0862745, 0.0862745, 0.0862745);
+	sectionBackgroundTransparency = 1;
+	toggleImage = "rbxassetid://1202200114";
+	rippleImage = "rbxassetid://2708891598";
+	borderRainbow = false;
+};
+
+function Funcs:Minimize(v)
+	if (Cool.Minimize == false) then
+		Cool.Minimize = true
+
+		local Icon = v:FindFirstChild('Icon')
+
+		Icon.Image = 'rbxassetid://7072718683'
+
+		Cool.DisableButtons = true
+		Cool.DraggingEnabled = true
+
+		Funcs:Colorize(v, 'Opened')
+		Buttons.ClipsDescendants = true
+		Buttons:TweenSize(Sizes['Minimize'], 'Out', 'Quad', 0.5, false)
+
+		Funcs:Notify('User-Interface', "UI is now draggable, Hold click on the background of the Minimize button (Dark Edges) and move your mouse.", 'Check', 8)
+
+		for index,c in pairs(Out:children()) do
+			if (c:IsA('Frame') and c.Name ~= 'Buttons' and c.Name ~= 'NotificationBox' and c.Name ~= 'LoadedFrame' and v.Visible ~= false) then
+				if (Buttons[c.Name] ~= nil) then
+					Funcs:Colorize(Buttons[c.Name], 'Closed')
+				end
+				Funcs:Visible(c, 'Close')
+			end
+		end
+
+	elseif (Cool.Minimize == true) then
+		Cool.Minimize = false
+
+		local Icon = v:FindFirstChild('Icon')
+
+		Icon.Image = 'rbxassetid://7072719125'
+
+		Cool.DisableButtons = false
+		Cool.DraggingEnabled = false
+
+		Funcs:Notify('User-Interface', "UI dragging is now disabled.", 'Check', 3)
+		Funcs:Colorize(v, 'Closed')
+		Buttons:TweenPosition(UDim2.new(0.025, 0,0.513, 0), 'Out', 'Quint', 0.3, false)
+		Buttons:TweenSize(Sizes['Maximize'], 'Out', 'Quad', 0.5, false, function(State)
+			if (State == Enum.TweenStatus.Completed) then
+				Buttons.ClipsDescendants = false
+			end
+		end)
+
+		if (Cool.NotificationEnabled == false) then
+			local ButtonObject = Buttons.Notification
+			local Image = ButtonObject.Icon
+			Image.Image = 'rbxassetid://7072705964'
+			Funcs:Colorize(ButtonObject, 'Opened')
+		end
+	end
+end
+
+function Funcs:LoadFrame(io)
+	if (io == true and LoadedFrame) then
+
+		LoadedFrame.Visible = true
+
+		local Blur = LoadedFrame.Blur
+		Blur.Parent = Lighting
+
+		local Header = LoadedFrame.Header
+		local UIStroke = LoadedFrame.UIStroke
+
+		local AnimationTwoStart = Funcs:Animate(Header, 0.5, 'Quad', 'Out', 
+			{
+				TextTransparency = 0;
+			}
+		)
+		local AnimationThreeStart = Funcs:Animate(UIStroke, 0.5, 'Quad', 'Out', 
+			{
+				Transparency = 0.2;
+			}
+		)
+		local AnimationFourStart = Funcs:Animate(LoadedFrame, 0.5, 'Quad', 'Out', 
+			{
+				BackgroundTransparency = 0.2;
+			}
+		)
+
+		local BlurEffect = Funcs:Animate(Blur, 1, 'Quint', 'InOut', {
+			Size = 15
+		})
+		AnimationTwoStart:Play()
+		AnimationThreeStart:Play()
+		AnimationFourStart:Play()
+		BlurEffect:Play()
+		local Header = LoadedFrame.Header
+		local UIStroke = LoadedFrame.UIStroke
+
+		local AnimationTwo = Funcs:Animate(Header, 0.5, 'Quad', 'Out', 
+			{
+				TextTransparency = 1;
+			}
+		)
+		local AnimationThree = Funcs:Animate(UIStroke, 0.5, 'Quad', 'Out', 
+			{
+				Transparency = 1;
+			}
+		)
+		local AnimationFour = Funcs:Animate(LoadedFrame, 0.5, 'Quad', 'Out', 
+			{
+				BackgroundTransparency = 1;
+			}
+		)
+		local AnimationFive = Funcs:Animate(Blur, 0.5, 'Quad', 'Out', 
+			{
+				Size = 0;
+			}
+		)
+		wait(5)
+		AnimationTwo:Play()
+		AnimationThree:Play()
+		AnimationFour:Play()
+		AnimationFour.Completed:Wait(10)
+		LoadedFrame.Visible = false
+		AnimationFive:Play()
+		AnimationFive.Completed:Wait()
+		Blur.Enabled = false
+		Buttons.Visible = true
+		Funcs:Greetings()
+	end
+end
+
+function Funcs:Notifications(v)
+	local Icons = {
+		[true] = 'rbxassetid://7072706001',
+		[false] = 'rbxassetid://7072705964',
+	}
+	if (Cool.NotificationEnabled == true) then
+		Cool.NotificationEnabled = false
+		local Icon = Icons[Cool.NotificationEnabled]
+		local Image = v.Icon
+		Image.Image = Icon
+		Funcs:Colorize(v, 'Opened')
+	elseif (Cool.NotificationEnabled == false) then
+		Cool.NotificationEnabled = true
+		local Icon = Icons[Cool.NotificationEnabled]
+		local Image = v.Icon
+		Image.Image = Icon
+		Funcs:Notify('Notifications Enabled', "Notifications is now authorized to pop-up.", 'Check', 5.5)
+		Funcs:Colorize(v, 'Closed')
+	end
+end
+
+function Funcs:AddSound(Obj, io)
+	if (io == 'Notification') then
+		local Sound = Instance.new('Sound', Obj)
+		Sound.SoundId = 'rbxassetid://8183296024'
+		Sound.Volume = 0.3
+		Sound:Play()
+		Sound.Ended:Connect(function()
+			game.Debris:AddItem(Sound, 1)
+		end)
+	elseif (not io == 'Notification' and typeof(io) == 'number') then
+		local Sound = Instance.new('Sound', Obj)
+		Sound.SoundId = 'rbxassetid://'.. tostring(io)
+		Sound:Play()
+		Sound.Ended:Connect(function()
+			game.Debris:AddItem(Sound, 1)
+		end)
+	end
+end
+
+function Funcs:Greetings()
+	Funcs:Notify('Greetings, @'..PlayersService.LocalPlayer.DisplayName, 'Hello, Welcome back.', 'Check', 4.5)
+	wait(2)
+	Funcs:Notify('Information', "You can find the Interactions on your left screen, A lots of features have been added in this hub, I hope you enjoy using it.", 'Circle', 10.5)
+end
+
+function Funcs:Notify(Header, Description, IconName, TimeRemoval)
+	--[[if (typeof(Header) ~= 'string') then return end
+	if (typeof(Description) ~= 'string') then return end
+	if (typeof(IconName) ~= 'string') then return end
+	if (typeof(TimeRemoval) ~= 'number') then return end
+	]]
+
+	if (Cool.NotificationEnabled~=true) then print('Unable to notify.') return end
+
+
+	local Icons = {
+		['Check'] = 'rbxassetid://7072706620',
+		['Error'] = 'rbxassetid://7072725342',
+		['Outdated'] = 'rbxassetid://7072721134',
+		['Blank'] = 'rbxassetid://7072719338',
+		['Circle'] = 'rbxassetid://9324825828',
+	}
+	if (Icons[IconName]) then
+		local Icon = Icons[IconName]
+
+		local Obj = NotificationUIs.Notification:Clone()
+
+		Obj.Parent = NotificationBox
+
+		local Head = Obj.Header
+		local Desc = Obj.Description
+		local Image = Head.Icon
+
+		Image.Image = Icon
+		Desc.Text = Description
+		Head.Text = Header
+
+		Funcs:AddSound(Obj, 'Notification')
+
+		Obj.Visible = true
+		local SizingAnimation = Funcs:Animate(Obj, 0.7, 'Quad', 'Out', {Size = Sizes['Notification']})
+		local DescriptionTextTransparency = Funcs:Animate(Desc, 0.7, 'Quad', 'Out', {TextTransparency = 0})
+		SizingAnimation:Play()
+		SizingAnimation.Completed:Connect(function()
+			DescriptionTextTransparency:Play()
+			DescriptionTextTransparency.Completed:Wait()
+			delay(TimeRemoval, function()
+				local CloseAnimation = Funcs:Animate(Obj, 0.7, 'Quad', 'Out', {Size = Sizes['ClosedNotification']})
+				CloseAnimation:Play()
+				CloseAnimation.Completed:Wait()
+				game.Debris:AddItem(Obj, 0)
+			end)
+		end)
+	end
+end
+
+function Funcs:RippleButton(btn)
+	spawn(function()
+		local mouse = game:GetService("Players").LocalPlayer:GetMouse();
+		local rippleEffect = Instance.new("ImageLabel", btn);
+		local rippleEffectInner = Instance.new("ImageLabel", rippleEffect);
+		rippleEffect.Name = "rippleEffect";
+		rippleEffect.BackgroundTransparency = 1;
+		rippleEffect.BorderSizePixel = 0;
+		rippleEffect.Image = Library.Settings.rippleImage;
+		rippleEffect.ImageColor3 = Color3.fromRGB(244, 244, 244);
+		rippleEffect.ImageTransparency = 0.7;
+		rippleEffect.ScaleType = Enum.ScaleType.Fit;
+		rippleEffectInner.Name = "rippleEffect";
+		rippleEffectInner.AnchorPoint = Vector2.new(0.5, 0.5);
+		rippleEffectInner.BackgroundTransparency = 1;
+		rippleEffectInner.BorderSizePixel = 0;
+		rippleEffectInner.Position = UDim2.new(0.5, 0, 0.5, 0);
+		rippleEffectInner.Size = UDim2.new(0.93, 0, 0.93, 0);
+		rippleEffectInner.Image = Library.Settings.rippleImage;
+		rippleEffectInner.ImageColor3 = Color3.fromRGB(45, 45, 45);
+		rippleEffectInner.ImageTransparency = 0.7;
+		rippleEffectInner.ScaleType = Enum.ScaleType.Fit;
+		rippleEffect.Position = UDim2.new((mouse.X - rippleEffect.AbsolutePosition.X) / btn.AbsoluteSize.X, 0, (mouse.Y - rippleEffect.AbsolutePosition.Y) / btn.AbsoluteSize.Y, 0);
+		local Animation = TweenService:Create(rippleEffect, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+			Position = UDim2.new(-4.5, 0, -4.5, 0);
+			Size = UDim2.new(10, 0, 10, 0);
+			ImageTransparency = 1;
+		})
+		Animation:Play();
+
+		Animation.Completed:Connect(function()
+			rippleEffect:Destroy();
+		end);
+	end)
+end
+
+Events.UserIDChanged = nil
+Events.ImageChanged = nil
+Events.FriendsCountChanged = nil
+
+TotalCount.Text = string.match(Encode, '%d+')
+
+Events.FriendsCountChanged = TotalCount:GetPropertyChangedSignal('Text'):Connect(function()
+	local GetNumbers = string.match(Encode, '%d+')
+	TotalCount.Text = GetNumbers
+end)
+
+AccAge.Text = tostring(PlayersService.LocalPlayer.AccountAge)
+Events.UserIDChanged = UserIDText:GetPropertyChangedSignal('Text'):Connect(function()
+	AccountAge.Text = tostring(PlayersService.LocalPlayer.AccountAge)
+end)
+
+function Funcs:Thumbnail(ID)
+	return ('https://www.roblox.com/headshot-thumbnail/image?userId=%d&width=420&height=420&format=png'):format(ID)
+end
+
+local GetThumb = Funcs:Thumbnail(PlayersService.LocalPlayer.UserId)
+Profile.Image = GetThumb
+
+Events.ImageChanged = Profile:GetPropertyChangedSignal('Image'):Connect(function()
+	if (Profile.Image ~= GetThumb) then
+		Profile.Image = GetThumb
+	end
+end)
+
+function Funcs:Dragify(gui)
+	task.spawn(function()
+		local dragging
+		local dragInput
+		local dragStart = Vector3.new(0,0,0)
+		local startPos
+		local function update(input)
+			local delta = input.Position - dragStart
+			local Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+			game:GetService("TweenService"):Create(gui, TweenInfo.new(.20), {Position = Position}):Play()
+		end
+		gui.InputBegan:Connect(function(input)
+			if Cool.DraggingEnabled and input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+				dragging = true
+				dragStart = input.Position
+				startPos = gui.Position
+
+				input.Changed:Connect(function()
+					if input.UserInputState == Enum.UserInputState.End then
+						dragging = false
+					end
+				end)
+			end
+		end)
+		gui.InputChanged:Connect(function(input)
+			if Cool.DraggingEnabled and input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+				dragInput = input
+			end
+		end)
+		UserInputService.InputChanged:Connect(function(input)
+			if Cool.DraggingEnabled and input == dragInput and dragging then
+				update(input)
+			end
+		end)
+	end)
+end
+
+Funcs:Dragify(Buttons)
+
+function Funcs:GetRootPart(Character)
+	return Character:FindFirstChild('HumanoidRootPart')
+end
+
+function Funcs:TextPopUp(o, io)
+	if (o == 'One') then
+		if (io == true) then
+			local CopiedToClipBoardTextOne = GitHub.CopiedToClipboard1
+			local TextTransparency = Funcs:Animate(CopiedToClipBoardTextOne, 0.6, 'Quad', 'Out', {TextTransparency = 0})
+
+			CopiedToClipBoardTextOne.TextColor3 = Funcs:GetColorName('Purple', true)
+			TextTransparency:Play()
+		elseif (io == false) then
+			local CopiedToClipBoardTextTwo = GitHub.CopiedToClipboard1
+			local TextTransparency = Funcs:Animate(CopiedToClipBoardTextTwo, 0.6, 'Quad', 'Out', {TextTransparency = 1})
+
+			CopiedToClipBoardTextTwo.TextColor3 = Funcs:GetColorName('Purple', true)
+			TextTransparency:Play()
+		end
+	elseif (o == 'Two') then
+		if (io == true) then
+			local CopiedToClipBoardTextOne = GitHub.CopiedToClipboard2
+			local TextTransparency = Funcs:Animate(CopiedToClipBoardTextOne, 0.6, 'Quad', 'Out', {TextTransparency = 0})
+
+			CopiedToClipBoardTextOne.TextColor3 = Funcs:GetColorName('Purple', true)
+			TextTransparency:Play()
+		elseif (io == false) then
+			local CopiedToClipBoardTextTwo = GitHub.CopiedToClipboard2
+			local TextTransparency = Funcs:Animate(CopiedToClipBoardTextTwo, 0.6, 'Quad', 'Out', {TextTransparency = 1})
+
+			CopiedToClipBoardTextTwo.TextColor3 = Funcs:GetColorName('Purple', true)
+			TextTransparency:Play()
+		end
+	end
+end
+
+function Funcs:ColorizeCopyClipboard(Obj, io)
+	if (io == 'Pressed') then
+		local UIStroke = Obj:FindFirstChildOfClass('UIStroke')
+		local Image = Obj:FindFirstChildOfClass('ImageLabel')
+		local ColorUIStroke = Funcs:Animate(UIStroke, 0.6, 'Quad', 'Out', {Color = Funcs:GetColorName('Darker')})
+		local ImageColor = Funcs:Animate(Image, 0.6, 'Quad', 'Out', {ImageColor3 = Funcs:GetColorName('Darker')})
+		local BackgroundColor = Funcs:Animate(Obj, 0.6, 'Quad', 'Out', {BackgroundColor3 = Funcs:GetColorName('Purple', true)})
+
+		ColorUIStroke:Play()
+		ImageColor:Play()
+		BackgroundColor:Play()
+	elseif (io == 'Ended') then
+		local UIStroke = Obj:FindFirstChildOfClass('UIStroke')
+		local Image = Obj:FindFirstChildOfClass('ImageLabel')
+		local ColorUIStroke = Funcs:Animate(UIStroke, 0.6, 'Quad', 'Out', {Color = Funcs:GetColorName('White')})
+		local ImageColor = Funcs:Animate(Image, 0.6, 'Quad', 'Out', {ImageColor3 = Funcs:GetColorName('White')})
+		local BackgroundColor = Funcs:Animate(Obj, 0.6, 'Quad', 'Out', {BackgroundColor3 = Funcs:GetColorName('Dark')})
+
+		ColorUIStroke:Play()
+		ImageColor:Play()
+		BackgroundColor:Play()
+	end
+end
+
+function Funcs:TextBoxNumbersOnly(TextBox, ClampTo)
+	TextBox.Text = OldColor[TextBox.PlaceholderText]
+	TextBox:GetPropertyChangedSignal("Text"):Connect(function()
+		local Numeral = TextBox.Text:gsub('%D+', '')
+		local ToNumber = tonumber(Numeral)
+		TextBox.Text = Numeral
+		if (ToNumber ~= nil) then
+			TextBox.Text = tostring(math.clamp(ToNumber, 0, ClampTo));
+		end
+	end)
+	return TextBox
+end
+
+function Funcs:LengthBox(Obj, Length)
+	if (Length) then
+		Obj:GetPropertyChangedSignal('Text'):Connect(function()
+			if (Obj.Text:len() == Length) then
+				Obj.Text = Obj.Text
+			else
+				return
+			end
+		end)
+	end
+	return Obj
+end
+
+function Funcs:ClampTime(N)
+	return math.clamp(N, 1, 24)
+end
+
+function Funcs:Move(Obj, v, X, Y, io)
+	local CommandText = Obj:FindFirstChild('Command')
+	local DescriptionText = Obj:FindFirstChild('Description')
+
+	if (io == "Hover") then
+
+		CommandText.Text = v.Command:upper()
+		DescriptionText.Text = v.Description
+
+		Obj.Position = UDim2.new(0, X-55,0, Y-60)
+		Obj.Visible = true
+	elseif (io == "UnHover") then
+		CommandText.Text = ''
+		DescriptionText.Text = ''
+		Obj.Visible = false
+	end
+end
+
+function Funcs:SetMouse(Object, Table)
+	Object.MouseMoved:Connect(function(X, Y)
+		Funcs:Move(Out.VexAdmin.CommandHover, Table, X-15, Y-60, "Hover")
+	end)
+
+	Object.MouseLeave:Connect(function()
+		Funcs:Move(Out.VexAdmin.CommandHover, Table, nil, nil, "UnHover")
+	end)
+end
+
+function Funcs:TimeSet(Obj, Change)
+	local HOUR = math.floor((tick() % 86400) / 3600)
+	local MINUTE = math.floor((tick() % 3600) / 60)
+	local SECOND = math.floor(tick() % 60)
+	local AP = HOUR > 11 and 'PM' or 'AM'
+	HOUR = (HOUR % 12 == 0 and 12 or HOUR % 12)
+	HOUR = HOUR < 10 and '0' .. HOUR or HOUR
+	MINUTE = MINUTE < 10 and '0' .. MINUTE or MINUTE
+	SECOND = SECOND < 10 and '0' .. SECOND or SECOND
+
+	Obj.Text = HOUR..':'..MINUTE..' <font size="15">'..AP..'</font>'
+
+	if (Funcs:ClampTime(HOUR) > 12 and AP == 'AM') then
+		Change.Text = "It's past your bed time, you should go to sleep."
+	elseif (Funcs:ClampTime(HOUR) < 2 or Funcs:ClampTime(HOUR) < 4 and AP == 'PM') then
+		Change.Text = "Good afternoon @"..PlayersService.LocalPlayer.DisplayName..', How are you doing?'
+	elseif (Funcs:ClampTime(HOUR) > 8 or Funcs:ClampTime(HOUR) > 10 and AP == 'AM') then
+		Change.Text = "Good morning! I consider that you should start doing your morning routine."
+	elseif (Funcs:ClampTime(HOUR) > 8 or Funcs:ClampTime(HOUR) > 10 and AP == 'PM') then
+		Change.Text = "I hope you're having a Nice Evening, @"..PlayersService.LocalPlayer.DisplayName.."."
+	end
+end
+
+function Funcs:FindPlayerByString(User)
+	local String = User:lower()
+	for _, Plrs in pairs(game.Players:GetPlayers()) do
+		if (Plrs.Name:lower():sub(0, String:len()) == String or Plrs.DisplayName:lower():sub(0, User:len()) == String) then
+			return Plrs
+		end
+	end
+end
+
+function Funcs:GetSelectedColorFromString()
+	return ('200,200,200')
+end
+
+function Funcs:GetSelectedSplitColorsFromString()
+	return ('200,200,200')
+end
+
+function Funcs:AddCommandOnList(Command, Description, ToAdd, Callback)
+	if (Command and Description) then
+		if (Commands[Command] ~= nil) then
+			return
+		else
+			Commands[Command] = {
+				['Description'] = Description,
+				['Function'] = Callback,
+				['Command'] = ToAdd.Command,
+				['RichText'] = ToAdd.RichText
+			}
+		end
+	end
+end
+
+function Funcs:GetColorName(Color, Unknown)
+	local List = {
+		['Dark'] = Color3.fromRGB(21, 20, 26),
+		['White'] = Color3.fromRGB(255, 255, 255),
+		['Purple'] = Color3.fromRGB(179, 102, 249),
+		['Selected'] = SelectedColor,
+		['Green'] = Color3.fromRGB(98, 255, 74),
+		['Darker'] = Color3.fromRGB(15, 15, 15)
+	}
+	if (SelectingColors and SelectedColor and SelectingColors == Unknown) then
+		Funcs:ChangeAllColorsAtOnce(
+			{SelectedColor.R, SelectedColor.G, SelectedColor.B}
+		)
+		return SelectedColor
+	else
+		if List[Color] ~= nil then
+			return List[Color]
+		else
+			return Color3.fromRGB(0, 0, 0)
+		end
+	end
+end
+
+function Funcs:ChangeAllColorsAtOnce(RGB)
+	for i,v in pairs(Buttons:getChildren()) do
+		if (v:IsA('TextButton')) then
+			local GetHover = v:FindFirstChild('Hover')
+			if (v.BackgroundColor3 == OldColor) then
+				SelectedColor = Color3.fromRGB(unpack(RGB) or RGB)
+				OldColor = SelectedColor
+				GetHover.BackgroundColor3 = SelectedColor
+				v.BackgroundColor3 = SelectedColor
+			end
+		end
+	end
+end
+
+function Funcs:IsUnavailable(v, Name)
+	return (v.Name ~= Name)
+end
+
+function Funcs:IsNumber(str)
+	if tonumber(str) ~= nil or str == 'inf' then
+		return true
+	end
+end
+
+function Funcs:ReSize(io)
+	if (io == 'Selected') then
+		return UDim2.new(0, 11, 0, 11)
+	elseif (io == 'Deselected') then
+		return UDim2.new(0, 15, 0, 15)
+	end
+end
+
+function Funcs:Visible(Obj, io)
+	if (io == 'Open' and Sizes[Obj.Name] ~= nil) then
+		Obj.Visible = true
+		Obj:TweenSize(Sizes[Obj.Name], 'Out', 'Quint', 0.6, false)
+	elseif (io == 'Close') then
+		local Close = UDim2.new(0, 0,0, 305)
+		Obj:TweenSize(Close, 'Out', 'Quad', 0.3, false, function(Status)
+			if (Status == Enum.TweenStatus.Completed) then
+				Obj.Visible = false
+			end
+		end)
+	end
+end
+
+function Funcs:Animate(Obj, Time, EasingStyle, EasingDirection, Property)
+	local Create = TweenService:Create(
+		Obj,
+		TweenInfo.new(
+			Time,
+			Enum.EasingStyle[EasingStyle],
+			Enum.EasingDirection[EasingDirection],
+			0,
+			false,
+			0
+		),
+		Property
+	)
+	return Create
+end
+
+function Funcs:MouseHover(Obj, IsEntering)
+	if (IsEntering and Obj:FindFirstChild('Hover')) then
+		local Object = Obj:FindFirstChild('Hover')
+		local UIStroke = Object:FindFirstChild('UIStroke')
+		local BackgroundTransparency = Funcs:Animate(Object, 0.6, 'Quad', 'Out', {BackgroundTransparency = 0})
+		local TextTransparency = Funcs:Animate(Object, 0.6, 'Quad', 'Out', {TextTransparency = 0})
+		local StrokeTransparency = Funcs:Animate(UIStroke, 0.6, 'Quad', 'Out', {Transparency = 0})
+
+		BackgroundTransparency:Play()
+		TextTransparency:Play()
+		StrokeTransparency:Play()
+	elseif (not IsEntering and Obj:FindFirstChild('Hover')) then
+		local Object = Obj:FindFirstChild('Hover')
+		local UIStroke = Object:FindFirstChild('UIStroke')
+		local BackgroundTransparency = Funcs:Animate(Object, 0.6, 'Quad', 'Out', {BackgroundTransparency = 1})
+		local TextTransparency = Funcs:Animate(Object, 0.6, 'Quad', 'Out', {TextTransparency = 1})
+		local StrokeTransparency = Funcs:Animate(UIStroke, 0.6, 'Quad', 'Out', {Transparency = 1})
+
+		BackgroundTransparency:Play()
+		TextTransparency:Play()
+		StrokeTransparency:Play()
+	end
+end
+
+function Funcs:Colorize(Obj, io)
+	if (io == 'Closed') then
+		local Icon = Obj:FindFirstChild('Icon')
+		local HoverText = Obj:FindFirstChild('Hover')
+		local BackgroundColor = Funcs:Animate(Obj, 1, 'Cubic', 'Out', {BackgroundColor3 = Funcs:GetColorName('Dark')})
+		local ImageColor = Funcs:Animate(Icon, 1, 'Cubic', 'Out', {ImageColor3 = Funcs:GetColorName('White')})
+		local ColorizeHoverBackground = Funcs:Animate(HoverText, 1, 'Cubic', 'Out', {BackgroundColor3 = Funcs:GetColorName('Dark')})
+		local ColorizeHoverText = Funcs:Animate(HoverText, 1, 'Cubic', 'Out', {TextColor3 = Funcs:GetColorName('White')})
+		local SizeIcon =  Funcs:Animate(Icon, 0.6, 'Elastic', 'Out', {Size = Funcs:ReSize('Deselected')})
+
+		BackgroundColor:Play()
+		ImageColor:Play()
+		ColorizeHoverBackground:Play()
+		ColorizeHoverText:Play()
+		SizeIcon:Play()
+	elseif (io == 'Opened') then
+		local Icon = Obj:FindFirstChild('Icon')
+		local HoverText = Obj:FindFirstChild('Hover')
+		local BackgroundColor = Funcs:Animate(Obj, 1, 'Cubic', 'Out', {BackgroundColor3 = Funcs:GetColorName('Purple', true)})
+		local ImageColor = Funcs:Animate(Icon, 1, 'Cubic', 'Out', {ImageColor3 = Funcs:GetColorName('Dark')})
+		local ColorizeHoverBackground = Funcs:Animate(HoverText, 1, 'Cubic', 'Out', {BackgroundColor3 = Funcs:GetColorName('Purple', true)})
+		local ColorizeHoverText = Funcs:Animate(HoverText, 1, 'Cubic', 'Out', {TextColor3 = Funcs:GetColorName('Dark')})
+		local SizeIcon =  Funcs:Animate(Icon, 0.6, 'Elastic', 'Out', {Size = Funcs:ReSize('Selected')})
+
+		BackgroundColor:Play()
+		ImageColor:Play()
+		ColorizeHoverBackground:Play()
+		ColorizeHoverText:Play()
+		SizeIcon:Play()
+	end
+end
+
+Cool.DisableButtons = false
+
+for i,v in pairs(Buttons:getChildren()) do
+	if v:IsA('TextButton') then
+		v.MouseEnter:Connect(function()
+			Funcs:MouseHover(v, true)
+		end)
+		v.MouseLeave:Connect(function()
+			Funcs:MouseHover(v, false)
+		end)
+		if (v.Name ~= 'Minimize' and v.Name ~= 'Notification') then
+			v.MouseButton1Click:Connect(function()
+				if (Cool.Buttons == false and Out[v.Name] ~= nil and Out[v.Name].Visible ~= true and Cool.DisableButtons ~= true) then
+					local Selected = Out[v.Name]
+					Cool.Buttons = true
+					for index,c in pairs(Out:children()) do
+						if (c:IsA('Frame') and v.Name ~= c.Name and c.Name ~= 'Buttons' and c.Name ~= 'NotificationBox' and c.Name ~= 'LoadedFrame' and v.Visible ~= false) then
+							if (Buttons[c.Name] ~= nil) then
+								Funcs:Colorize(Buttons[c.Name], 'Closed')
+							end
+							Funcs:Visible(c, 'Close')
+						end
+					end
+					Funcs:Colorize(v, 'Opened')
+					Funcs:Visible(Selected, 'Open')
+					Selected.Visible = true
+					task.wait()
+					Cool.Buttons = false
+				end
+			end)
+		elseif (v.Name == 'Minimize') then
+			v.MouseButton1Click:Connect(function()
+				Funcs:Minimize(v)
+			end)
+
+			Events.MinimizeShortcutEvent = UserInputService.InputBegan:Connect(function(Input, GameProcessedEvent)
+				if (Input.KeyCode == Keys.Minimize and not GameProcessedEvent) then
+					Funcs:Minimize(v)
+				end
+			end)
+		elseif (v.Name == 'Notification') then
+			v.MouseButton1Click:Connect(
+				function()
+					Funcs:Notifications(v)
+				end
+			)
+		end
+	end
+end
+
+Funcs:AddCommandOnList('reset', 
+	[[Resets character.]],
+	{
+		Command = (Prefixes.Prefix..'reset'),
+		RichText = ('[<font face="Code" color="rgb('..Funcs:GetSelectedColorFromString()..')">'..Prefixes.Prefix..'</font>] reset'),
+	},
+	function(Speaker)
+		game.Players.LocalPlayer.Character:BreakJoints()
+	end
+)
+
+Funcs:AddCommandOnList('f3x', 
+	[[Gives you f3x (DOES NOT REPLICATE)]],
+	{
+		Command = (Prefixes.Prefix..'f3x'),
+		RichText = ('[<font face="Code" color="rgb('..Funcs:GetSelectedColorFromString()..')">'..Prefixes.Prefix..'</font>] f3x'),
+	},
+	function(Speaker)
+		pcall(function() loadstring(game:GetObjects("rbxassetid://6695644299")[1].Source)() end)
+		Funcs:Notify('F3x Building Tool', 'Lended F3X tool, This is a client only Btool that players cannot see.', 'Check', 5.5)
+	end
+)
+
+
+Events.Heartbeat = RunService.Heartbeat
+Funcs:AddCommandOnList('tpwalk', 
+	[[Teleports you to your move direction.]],
+	{
+		Command = (Prefixes.Prefix..'tpwalk (Number)'),
+		RichText = ('[<font face="Code" color="rgb('..Funcs:GetSelectedColorFromString()..')">'..Prefixes.Prefix..'</font>] tpwalk (<font color="rgb('..Funcs:GetSelectedSplitColorsFromString()..')">Number</font>)'),
+	},
+	function(Speaker, Arguments)
+		Cool.TpWalking = true
+		Funcs:Notify('Teleport Walk', 'Teleport walking enabled.', 'Check', 5.5)
+		local Number = Arguments[2]
+		local chr = Speaker.Character
+		local hum = chr and chr:FindFirstChildWhichIsA("Humanoid")
+		while Cool.TpWalking and Events.Heartbeat:Wait() and chr and hum and hum.Parent do
+			if hum.MoveDirection.Magnitude > 0 then
+				if Number and Funcs:IsNumber(Number) then
+					chr:TranslateBy(hum.MoveDirection * tonumber(Number))
+				else
+					chr:TranslateBy(hum.MoveDirection)
+				end
+			end
+		end
+	end
+)
+
+Funcs:AddCommandOnList('untpwalk', 
+	[[Discontinues TP Walk.]],
+	{
+		Command = (Prefixes.Prefix..'untpwalk'),
+		RichText = ('[<font face="Code" color="rgb('..Funcs:GetSelectedColorFromString()..')">'..Prefixes.Prefix..'</font>] untpwalk'),
+	},
+	function(Speaker)
+		Cool.TpWalking = false
+		Funcs:Notify('Teleport Walk', 'Teleport walking disabled.', 'Check', 5.5)
+	end
+)
+
+Funcs:AddCommandOnList('goto', 
+	[[Teleports speaker to a player.]],
+	{
+		Command = (Prefixes.Prefix..'goto (Player)'),
+		RichText = ('[<font face="Code" color="rgb('..Funcs:GetSelectedColorFromString()..')">'..Prefixes.Prefix..'</font>] goto (<font color="rgb('..Funcs:GetSelectedSplitColorsFromString()..')">Player</font>)'),
+	},
+	function(Speaker, Arguments)
+		local Name = Arguments[2]
+		if (Name) then
+			local Player = Funcs:FindPlayerByString(Name)
+			if (Player ~= nil) then
+				Funcs:GetRootPart(Speaker.Character).CFrame = Funcs:GetRootPart(Player.Character).CFrame + Vector3.new(3,1,0)
+			else
+				Funcs:Notify('Players Service', 'Cannot find the player named @'..Name..'.', 'Error', 5.5)
+			end
+		end
+	end
+)
+
+Funcs:AddCommandOnList('walkspeed', 
+	[[Increases player's speed at any amount.]],
+	{
+		Command = (Prefixes.Prefix..'walkspeed (Number)'),
+		RichText = ('[<font face="Code" color="rgb('..Funcs:GetSelectedColorFromString()..')">'..Prefixes.Prefix..'</font>] walkspeed (<font color="rgb('..Funcs:GetSelectedSplitColorsFromString()..')">Number</font>)'),
+	},
+	function(Speaker, Arguments)
+		local Number = Arguments[2]
+		local Character = Speaker.Character
+		local Humanoid = Character:FindFirstChildOfClass('Humanoid')
+		if (Number) then
+			if (typeof(tonumber(Number)) == 'number') then
+				Humanoid.WalkSpeed = tonumber(Number)
+			end
+		else
+			Funcs:Notify('Humanoid', 'Unable to change walk speed with a nil second argument.', 'Error', 3.5) 
+		end
+	end
+)
+
+Funcs:AddCommandOnList('jumppower', 
+	[[Increases player's jump power at any amount.]],
+	{
+		Command = (Prefixes.Prefix..'jumppower (Number)'),
+		RichText = ('[<font face="Code" color="rgb('..Funcs:GetSelectedColorFromString()..')">'..Prefixes.Prefix..'</font>] jumppower (<font color="rgb('..Funcs:GetSelectedSplitColorsFromString()..')">Number</font>)'),
+	},
+	function(Speaker, Arguments)
+		local Number = Arguments[2]
+		local Character = Speaker.Character
+		local Humanoid = Character:FindFirstChildOfClass('Humanoid')
+		if (Number) then
+			if (typeof(tonumber(Number)) == 'number') then
+				Humanoid.JumpPower = tonumber(Number)
+			end
+		else
+
+			Funcs:Notify('Humanoid', 'Unable to change jump power with a nil second argument.', 'Error', 3.5) 
+		end
+	end
+)
+
+Funcs:AddCommandOnList('enableshiftlock', 
+	[[Enables the shift lock option.]],
+	{
+		Command = (Prefixes.Prefix..'enableshiftlock'),
+		RichText = ('[<font face="Code" color="rgb('..Funcs:GetSelectedColorFromString()..')">'..Prefixes.Prefix..'</font>] enableshiftlock'),
+	},
+	function(Speaker, Arguments)
+		if (Speaker.DevEnableMouseLock == true) then 
+			Funcs:Notify('Shiftlock', 'Shiftlock is already enabled.', 'Blank', 3.5) 
+			return 
+		end
+		if (pcall(function() Speaker.DevEnableMouseLock = true end)) then
+			Funcs:Notify('Shiftlock', 'Shiftlock is now enabled.', 'Check', 3.5)
+		else
+			Funcs:Notify('Shiftlock', 'Failed to enable shiftlock.', 'Error', 3.5)
+		end
+	end
+)
+
+Funcs:AddCommandOnList('notify', 
+	[[Notifies yourself with a provided message that you wrote.]],
+	{
+		Command = (Prefixes.Prefix..'notify (Message)'),
+		RichText = ('[<font face="Code" color="rgb('..Funcs:GetSelectedColorFromString()..')">'..Prefixes.Prefix..'</font>] notify (<font color="rgb('..Funcs:GetSelectedSplitColorsFromString()..')">Message</font>)'),
+	},
+	function(Speaker, Arguments)
+		local Message = table.concat(Arguments, ' ', 2)
+		if (Message:match('.')) then
+			Funcs:Notify('Notification', Message, 'Blank', 7)
+		else
+			Funcs:Notify('No Message Provided', 'Please fill the second argument to notify yourself without any problems.', 'Error', 5)
+		end
+	end
+)
+
+Events.RenderStepped = RunService.RenderStepped:Connect(function(Render)
+	local Timer = Time.Timer
+	local Message = Time.Message
+	Funcs:TimeSet(Timer, Message)
+end)
+
+function Funcs:TriggerCommand(String)
+	local Lower = String:lower()
+	local Split = Lower:split(' ')
+	local FirstArgument = Split[1]
+	if (FirstArgument == Prefixes.Prefix..'walkspeed' or FirstArgument == Prefixes.Prefix..'ws') then
+		local Cmd = Commands['walkspeed']
+		if (typeof(Cmd.Function) == 'function') then
+			Cmd.Function(PlayersService.LocalPlayer, Split)
+		end
+	elseif (FirstArgument == Prefixes.Prefix..'jumppower' or FirstArgument == Prefixes.Prefix..'jp') then
+		local Cmd = Commands['jumppower']
+		if (typeof(Cmd.Function) == 'function') then
+			Cmd.Function(PlayersService.LocalPlayer, Split)
+		end
+	elseif (FirstArgument == Prefixes.Prefix..'tpwalk' or FirstArgument == Prefixes.Prefix..'teleportwalk') then
+		local Cmd = Commands['tpwalk']
+		if (typeof(Cmd.Function) == 'function') then
+			Cmd.Function(PlayersService.LocalPlayer, Split)
+		end
+	elseif (FirstArgument == Prefixes.Prefix..'untpwalk' or FirstArgument == Prefixes.Prefix..'unteleportwalk') then
+		local Cmd = Commands['untpwalk']
+		if (typeof(Cmd.Function) == 'function') then
+			Cmd.Function(PlayersService.LocalPlayer, Split)
+		end
+	elseif (FirstArgument == Prefixes.Prefix..'notify' or FirstArgument == Prefixes.Prefix..'notification') then
+		local Cmd = Commands['notify']
+		if (typeof(Cmd.Function) == 'function') then
+			print('Notify')
+			Cmd.Function(PlayersService.LocalPlayer, String:split(' '))
+		end
+	elseif (FirstArgument == Prefixes.Prefix..'to' or FirstArgument == Prefixes.Prefix..'goto') then
+		local Cmd = Commands['goto']
+		if (typeof(Cmd.Function) == 'function') then
+			Cmd.Function(PlayersService.LocalPlayer, Split)
+		end
+	elseif (FirstArgument == Prefixes.Prefix..'enableshiftlock' or FirstArgument == Prefixes.Prefix..'enablesl') then
+		local Cmd = Commands['enableshiftlock']
+		if (typeof(Cmd.Function) == 'function') then
+			Cmd.Function(PlayersService.LocalPlayer, Split)
+		end
+	elseif (FirstArgument == Prefixes.Prefix..'f3x' or FirstArgument == Prefixes.Prefix..'btools') then
+		local Cmd = Commands['f3x']
+		if (typeof(Cmd.Function) == 'function') then
+			Cmd.Function(PlayersService.LocalPlayer)
+		end
+	elseif (FirstArgument == Prefixes.Prefix..'reset') then
+		local Cmd = Commands['reset']
+		if (typeof(Cmd.Function) == 'function') then
+			Cmd.Function(PlayersService.LocalPlayer)
+		end
+	end 
+end
+
+for Index, v in pairs(Commands) do
+
+	local TextLabel = UIObjects:FindFirstChild('TextLabel'):Clone()
+
+	TextLabel.Name = v.Command
+	TextLabel.Parent = CommandList
+	TextLabel.Text = v.RichText
+	TextLabel.Visible = true
+	TextLabel.TextTransparency = 0
+
+	local PrefixValue = TextLabel:FindFirstChild('Prefix')
+	PrefixValue.Value = Prefixes.Prefix
+
+	PrefixValue:GetPropertyChangedSignal('Value'):Connect(function()
+		local Text = table.concat(TextLabel.Text:split('] '), ' ', 2)
+		local Replacement = PrefixValue.Value
+		TextLabel.Name = v.Command:sub(2)
+		TextLabel.Text = ('[<font face="Code" color="rgb('..Funcs:GetSelectedColorFromString()..')">'..Replacement..'</font>] '..Text)
+	end)
+
+	Funcs:SetMouse(TextLabel, v)
+end
+
+CommandBox.FocusLost:Connect(function(Enter)
+	if (Enter) then
+		if (CommandBox.Text:match('.')) then
+			local Restored = CommandBox.Text
+			CommandBox.Text = ''
+			CommandBox:ReleaseFocus()
+			if pcall(function() Funcs:TriggerCommand(Restored) end) then
+				return
+			else
+				Funcs:Notify('Command Bar', "There appears to be an error that transpired whilst running a command.", 'Error', 5.5)
+			end
+		end
+	end
+end)
+
+Events.TextChanged = CommandBox:GetPropertyChangedSignal('Text'):Connect(function()
+	for Index, Obj in pairs(CommandList:getChildren()) do
+		if (Obj:IsA('TextLabel')) then
+			if (CommandBox.Text:match('.')) then
+				if (CommandBox.Text:sub(1, 1):lower() == Prefixes.Prefix:lower() and string.find(Obj.Name, CommandBox.Text:split(' ')[1]:sub(2))) then
+					Indexes.Result = Indexes.Result + 1
+					Obj.Visible = true
+					ResultText.Visible = true
+					local TextTransparency = Funcs:Animate(Obj, 0.7, 'Quad', 'Out', {TextTransparency = 0})
+					TextTransparency:Play()
+					local ResultTextTransparency = Funcs:Animate(ResultText, 0.7, 'Quad', 'Out', {TextTransparency = 0})
+					ResultTextTransparency:Play()
+					ResultText.Text = "(<font face='Code' size='12'>"..Indexes.Result.."</font>)"
+				else
+					local TextTransparency = Funcs:Animate(Obj, 0.7, 'Quad', 'Out', {TextTransparency = 1})
+					TextTransparency:Play()
+					TextTransparency.Completed:Connect(
+						function()
+							Obj.Visible = false
+						end
+					)
+					if Indexes.Result == 0 then
+						ResultText.Visible = true
+						local ResultTextTransparency = Funcs:Animate(ResultText, 0.7, 'Quad', 'Out', {TextTransparency = 0})
+						ResultTextTransparency:Play()
+						ResultText.Text = "(<font face='Code' size='12'>"..Indexes.Result.."</font>)"
+					end
+				end
+			else
+				Obj.Visible = true
+				local TextTransparency = Funcs:Animate(Obj, 0.7, 'Quad', 'Out', {TextTransparency = 0})
+				TextTransparency:Play()
+				if (ResultText.Visible) then
+					local ResultTextTransparency = Funcs:Animate(ResultText, 0.7, 'Quad', 'Out', {TextTransparency = 1})
+					ResultTextTransparency:Play()
+
+					ResultTextTransparency.Completed:Connect(
+						function()
+							ResultText.Visible = false
+						end
+					)
+				end
+			end
+		end
+	end
+	Indexes.Result = 0
+end)
+
+Funcs:TextBoxNumbersOnly(R, 255).FocusLost:Connect(function()
+	if (Colors.R) then
+		Colors.R = tonumber(R.Text) or 0
+		SelectedColor = Color3.fromRGB(tonumber(R.Text) or 0, tonumber(G.Text) or 0, tonumber(B.Text) or 0)
+		Funcs:ChangeAllColorsAtOnce({tonumber(R.Text) or 0, tonumber(G.Text) or 0, tonumber(B.Text) or 0})
+		Funcs:Animate(MainProfile, 1, 'Cubic', 'Out', {BackgroundColor3 = Funcs:GetColorName('Purple', true)}):Play()
+		if (R.Text:match('.')) then
+			return
+		else
+			R.Text = '0'
+		end
+	else
+		SelectingColors = true
+		Colors.R = tonumber(R.Text)
+		Funcs:ChangeAllColorsAtOnce({tonumber(R.Text) or 0, tonumber(G.Text) or 0, tonumber(B.Text) or 0})
+		if (R.Text:match('.')) then
+			return
+		else
+			R.Text = '0'
+		end
+	end
+end)
+
+Funcs:TextBoxNumbersOnly(G, 255).FocusLost:Connect(function()
+	if (Colors.G) then
+		Colors.G = tonumber(G.Text) or 0
+		SelectedColor = Color3.fromRGB(tonumber(R.Text) or 0, tonumber(G.Text) or 0, tonumber(B.Text) or 0)
+		Funcs:ChangeAllColorsAtOnce({tonumber(R.Text) or 0, tonumber(G.Text) or 0, tonumber(B.Text) or 0})
+		Funcs:Animate(MainProfile, 1, 'Cubic', 'Out', {BackgroundColor3 = Funcs:GetColorName('Purple', true)}):Play()
+		if (G.Text:match('.')) then
+			return
+		else
+			G.Text = '0'
+		end
+	else
+		SelectingColors = true
+		Colors.G = tonumber(G.Text)
+		Funcs:ChangeAllColorsAtOnce({tonumber(R.Text) or 0, tonumber(G.Text) or 0, tonumber(B.Text) or 0})
+		if (G.Text:match('.')) then
+			return
+		else
+			G.Text = '0'
+		end
+	end
+end)
+
+Funcs:TextBoxNumbersOnly(B, 255).FocusLost:Connect(function()
+	if (Colors.B) then
+		Colors.B = tonumber(B.Text) or 0
+		SelectedColor = Color3.fromRGB(tonumber(R.Text) or 0, tonumber(G.Text) or 0, tonumber(B.Text) or 0)
+		Funcs:ChangeAllColorsAtOnce({tonumber(R.Text) or 0, tonumber(G.Text) or 0, tonumber(B.Text) or 0})
+		Funcs:Animate(MainProfile, 1, 'Cubic', 'Out', {BackgroundColor3 = Funcs:GetColorName('Purple', true)}):Play()
+		if (B.Text:match('.')) then
+			return
+		else
+			B.Text = '0'
+		end
+	else
+		SelectingColors = true
+		Colors.B = tonumber(B.Text)
+		Funcs:ChangeAllColorsAtOnce({tonumber(R.Text) or 0, tonumber(G.Text) or 0, tonumber(B.Text) or 0})
+		if (B.Text:match('.')) then
+			return
+		else
+			B.Text = '0'
+		end
+	end
+end)
+
+Cool.CopyClipBoardOne = false
+Cool.CopyClipBoardTwo = false
+
+CopyButtonOne.MouseButton1Click:Connect(
+	function()
+		if (Cool.CopyClipBoardOne == false) then
+			Cool.CopyClipBoardOne = true
+			Funcs:RippleButton(CopyButtonOne)
+			Funcs:ColorizeCopyClipboard(CopyButtonOne, 'Pressed')
+			pcall(function()
+				setclipboard(Clipboards[CopyButtonOne.Name])
+			end)
+			Funcs:TextPopUp('One', true)
+			wait(1.5)
+			Funcs:ColorizeCopyClipboard(CopyButtonOne, 'Ended')
+			Funcs:TextPopUp('One', false)
+			Cool.CopyClipBoardOne = false
+		end
+	end
+)
+
+CopyButtonTwo.MouseButton1Click:Connect(
+	function()
+		if (Cool.CopyClipBoardTwo == false) then
+			Cool.CopyClipBoardTwo = true
+			Funcs:RippleButton(CopyButtonTwo)
+			Funcs:ColorizeCopyClipboard(CopyButtonTwo, 'Pressed')
+			pcall(function()
+				setclipboard(Clipboards[CopyButtonTwo.Name])
+			end)
+			Funcs:TextPopUp('Two', true)
+			wait(1.5)
+			Funcs:ColorizeCopyClipboard(CopyButtonTwo, 'Ended')
+			Funcs:TextPopUp('Two', false)
+			Cool.CopyClipBoardTwo = false
+		end
+	end
+)
+
+Cool.MinimizeFocused = false
+
+Funcs:LengthBox(MinimizeShortcutBox, 1).Focused:Connect(function()
+	if (Events.MinimizeFocusedEvent == nil) then
+		Events.MinimizeFocusedEvent = UserInputService.InputBegan:Connect(function(Input, GameProcessedEvent)
+			if (Input.KeyCode and Input.KeyCode ~= Enum.KeyCode.Unknown and GameProcessedEvent and Input.KeyCode.Name ~= Prefixes.Prefix:upper()) then
+				if (MinimizeShortcutBox:IsFocused() and Cool.MinimizeFocused == false) then
+					Cool.MinimizeFocused = true
+					wait(0.15)
+					MinimizeShortcutBox.Text = Input.KeyCode.Name
+					Keys.Minimize = Input.KeyCode
+					MinimizeShortcutBox:ReleaseFocus()
+					Cool.MinimizeFocused = false
+				end
+			end
+		end)
+	end
+end)
+
+Funcs:LengthBox(MinimizeShortcutBox).FocusLost:Connect(function(Enter)
+	if (Events.MinimizeFocusedEvent) then
+		Events.MinimizeFocusedEvent:Disconnect()
+		Events.MinimizeFocusedEvent = nil
+	end
+end)
+
+Funcs:LengthBox(PrefixBox, 1).FocusLost:Connect(function(Enter)
+	if (PrefixBox.Text:match('.') and Cool.PrefixFocused == false) then
+		Cool.PrefixFocused = true
+		local Current = string.sub(PrefixBox.Text, 1, 1):upper()
+		Prefixes.Prefix = Current
+		PrefixBox.Text = Current
+		for i,v in pairs(CommandList:GetChildren()) do
+			if (v:IsA('TextLabel') and v:FindFirstChild('Prefix')) then
+				local PrefixTextLabel = v:FindFirstChild('Prefix')
+				PrefixTextLabel.Value = Prefixes.Prefix
+			end
+		end
+		wait()
+		Cool.PrefixFocused = false
+	end
+end)
+
+GetMouse.KeyDown:Connect(function(K)
+	if (K:upper() == Prefixes.Prefix:upper() and Cool.PrefixFocused == false and Cool.DisableButtons ~= true) then
+		print(K)
+		Cool.PrefixFocused = true
+		local Button = Buttons[VexAdmin.Name]
+		for index,c in pairs(Out:children()) do
+			if (c:IsA('Frame') and c.Name ~= 'VexAdmin' and c.Name ~= 'Buttons' and c.Name ~= 'NotificationBox' and c.Name ~= 'LoadedFrame' and Button.Visible ~= false) then
+				if (Buttons[c.Name] ~= nil) then
+					Funcs:Colorize(Buttons[c.Name], 'Closed')
+				end
+				Funcs:Visible(c, 'Close')
+			end
+		end
+		Funcs:Visible(VexAdmin, 'Open')
+		Funcs:Colorize(Button, 'Opened')
+		CommandBox:CaptureFocus()
+		spawn(function()
+			repeat CommandBox.Text = Prefixes.Prefix..'' until CommandBox.Text == Prefixes.Prefix..''
+		end)
+		wait()
+		Cool.PrefixFocused = false
+	end
+end)
+
+print('Fully Running')
+
+Funcs:LoadFrame(true)
