@@ -1,5 +1,5 @@
-Version = '1.1',
-DateUpdated = '4/10/2022',
+Version = '1.1'
+DateUpdated = '4/10/2022'
 UpdateInformation = [[
 - Shutdown Button:
 Shuts down the Hub, You'll have to re-execute the script to get it back.
