@@ -345,7 +345,7 @@ end
 function Funcs:SetUpdateInfo()
 	task.spawn(function()
 		local Success, Returned = pcall(function()
-			return game:HttpGet('https://raw.githubusercontent.com/GioCruz11/Vexility/main/Version', true)
+			return HttpService:JSONDecode(game:HttpGet('https://raw.githubusercontent.com/GioCruz11/Vexility/main/Version', true))
 		end)
 		if (Success) then
 			if (Returned) then
