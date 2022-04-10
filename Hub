@@ -153,6 +153,11 @@ function Funcs:Shutdown()
 				Funcs:Visible(c, 'Close')
 			end
 		end
+		for _, Event in pairs(Events) do
+			if (typeof(Event) == 'RBXScriptConnection') then
+				Event:Disconnect()
+			end
+		end
 		Buttons.Visible = false
 		Secondary.Visible = false
 		if pcall(function()
