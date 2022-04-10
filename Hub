@@ -1,19 +1,19 @@
-local TweenService = game:GetService('TweenService')
+local TweenService = game:GetService("TweenService")
 local RunService = game:GetService('RunService')
 local PlayersService = game:GetService('Players')
 local HttpService = game:GetService('HttpService')
 local UserInputService = game:GetService('UserInputService')
 local Lighting = game:GetService('Lighting')
+local Ver = '1.1'
 local Source = game:GetObjects('rbxassetid://9316886202')
-local LocalPlayer = PlayersService.LocalPlayer
-local GetMouse = LocalPlayer:GetMouse()
-local Ver = '1.0'
+
+local GetMouse = PlayersService.LocalPlayer:GetMouse()
 
 local Out = Source[1]
 
-repeat wait(2) print('Finding Vex Admin....') until Out:FindFirstChild('VexAdmin') and Out:FindFirstChild('NotificationBox')
+repeat wait() print('Finding Vex Admin....') until Out:FindFirstChild('VexAdmin')
 
-Out.Parent = LocalPlayer.PlayerGui
+pcall(function() Out.Parent = game.CoreGui Out.ResetOnSpawn = false end)
 
 local VexAdmin = Out.VexAdmin
 local Settings = Out.Settings
@@ -31,9 +31,14 @@ local UpdateInfo = Out.UpdateInfo
 local Time = Out.Time
 local PlayerProfile = Out.PlayerProfile
 local Buttons = Out.Buttons
+local Secondary = Out.Secondary
 local MainProfile = PlayerProfile.MainProfile
 local ResultText = VexAdmin.ResultText
 local Profile = MainProfile.Profile
+
+local LastUpdated = UpdateInfo.LastUpdated
+local Information = UpdateInfo.UpdateInfo
+local VersionText = UpdateInfo.Version
 
 local UserIdBackground = PlayerProfile.UserID
 local UserIDText = UserIdBackground.ID
@@ -51,7 +56,7 @@ local UIObjects = VexAdmin.UIObjects
 local CommandFrame = VexAdmin.CommandFrame
 local CommandBox = CommandFrame.CommandBox
 
-local Encode = game:HttpGet('https://friends.roblox.com/v1/users/'..PlayersService.LocalPlayer.UserId..'/friends/count', true)
+--[[local Encode = game:HttpGet('https://friends.roblox.com/v1/users/'..PlayersService.LocalPlayer.UserId..'/friends/count', true)]]
 
 local Prefixes = {}
 Prefixes.Prefix = (';')
@@ -123,6 +128,48 @@ Library.Settings = {
 	borderRainbow = false;
 };
 
+Cool.IsShutdowned = false
+
+function Funcs:Shutdown()
+	if (Lighting:FindFirstChildOfClass('BlurEffect') and Cool.IsShutdowned == false) then
+		Cool.IsShutdowned = true
+		local Blur = Lighting:FindFirstChildOfClass('BlurEffect')
+
+		Blur.Enabled = true
+
+		local BlurEffect = Funcs:Animate(Blur, 1, 'Quint', 'InOut', {
+			Size = 15
+		})
+		BlurEffect:Play()
+		local BlurEffectReset = Funcs:Animate(Blur, 1, 'Quint', 'InOut', {
+			Size = 0
+		})
+		BlurEffect.Completed:Wait()
+		for index,c in pairs(Out:children()) do
+			if (c:IsA('Frame') and c.Name ~= 'Buttons' and c.Name ~= 'NotificationBox' and c.Name ~= 'LoadedFrame' and c.Name ~= 'Secondary') then
+				if (Buttons[c.Name] ~= nil) then
+					Funcs:Colorize(Buttons[c.Name], 'Closed')
+				end
+				Funcs:Visible(c, 'Close')
+			end
+		end
+		Buttons.Visible = false
+		Secondary.Visible = false
+		if pcall(function()
+		Funcs:Notify('Shutdown', "Vex Hub has been shutdowned successfully, You can execute the script again If you desire to bring it back.", 'Check', 4)
+			end) then
+			delay(5, function(t)
+				BlurEffectReset:Play()
+				wait(t - t + 1)
+				script:Destroy()
+				Out:Destroy()
+				warn('[Vex]: Successfully removed.')
+				warn('[LocalScript]: Successfully removed.')
+			end)
+		end
+	end
+end
+
 function Funcs:Minimize(v)
 	if (Cool.Minimize == false) then
 		Cool.Minimize = true
@@ -136,12 +183,14 @@ function Funcs:Minimize(v)
 
 		Funcs:Colorize(v, 'Opened')
 		Buttons.ClipsDescendants = true
+		Secondary.Visible = not Cool.Minimize
+
 		Buttons:TweenSize(Sizes['Minimize'], 'Out', 'Quad', 0.5, false)
 
 		Funcs:Notify('User-Interface', "UI is now draggable, Hold click on the background of the Minimize button (Dark Edges) and move your mouse.", 'Check', 8)
 
 		for index,c in pairs(Out:children()) do
-			if (c:IsA('Frame') and c.Name ~= 'Buttons' and c.Name ~= 'NotificationBox' and c.Name ~= 'LoadedFrame' and v.Visible ~= false) then
+			if (c:IsA('Frame') and c.Name ~= 'Buttons' and c.Name ~= 'NotificationBox' and c.Name ~= 'LoadedFrame' and c.Name ~= 'Secondary' and v.Visible ~= false) then
 				if (Buttons[c.Name] ~= nil) then
 					Funcs:Colorize(Buttons[c.Name], 'Closed')
 				end
@@ -158,6 +207,8 @@ function Funcs:Minimize(v)
 
 		Cool.DisableButtons = false
 		Cool.DraggingEnabled = false
+
+		Secondary.Visible = not Cool.Minimize
 
 		Funcs:Notify('User-Interface', "UI dragging is now disabled.", 'Check', 3)
 		Funcs:Colorize(v, 'Closed')
@@ -244,6 +295,7 @@ function Funcs:LoadFrame(io)
 		AnimationFive.Completed:Wait()
 		Blur.Enabled = false
 		Buttons.Visible = true
+		Secondary.Visible = true
 		Funcs:Greetings()
 		wait(3.15)
 		Funcs:SetUpdateInfo()
@@ -407,12 +459,12 @@ Events.UserIDChanged = nil
 Events.ImageChanged = nil
 Events.FriendsCountChanged = nil
 
-TotalCount.Text = string.match(Encode, '%d+')
+--[[TotalCount.Text = string.match(Encode, '%d+')
 
 Events.FriendsCountChanged = TotalCount:GetPropertyChangedSignal('Text'):Connect(function()
 	local GetNumbers = string.match(Encode, '%d+')
 	TotalCount.Text = GetNumbers
-end)
+end)]]
 
 AccAge.Text = tostring(PlayersService.LocalPlayer.AccountAge)
 Events.UserIDChanged = UserIDText:GetPropertyChangedSignal('Text'):Connect(function()
@@ -754,7 +806,7 @@ function Funcs:MouseHover(Obj, IsEntering)
 end
 
 function Funcs:Colorize(Obj, io)
-	if (io == 'Closed') then
+	if (io == 'Closed' or io == 'Leave') then
 		local Icon = Obj:FindFirstChild('Icon')
 		local HoverText = Obj:FindFirstChild('Hover')
 		local BackgroundColor = Funcs:Animate(Obj, 1, 'Cubic', 'Out', {BackgroundColor3 = Funcs:GetColorName('Dark')})
@@ -768,7 +820,7 @@ function Funcs:Colorize(Obj, io)
 		ColorizeHoverBackground:Play()
 		ColorizeHoverText:Play()
 		SizeIcon:Play()
-	elseif (io == 'Opened') then
+	elseif (io == 'Opened' or io == 'Enter') then
 		local Icon = Obj:FindFirstChild('Icon')
 		local HoverText = Obj:FindFirstChild('Hover')
 		local BackgroundColor = Funcs:Animate(Obj, 1, 'Cubic', 'Out', {BackgroundColor3 = Funcs:GetColorName('Purple', true)})
@@ -801,7 +853,7 @@ for i,v in pairs(Buttons:getChildren()) do
 					local Selected = Out[v.Name]
 					Cool.Buttons = true
 					for index,c in pairs(Out:children()) do
-						if (c:IsA('Frame') and v.Name ~= c.Name and c.Name ~= 'Buttons' and c.Name ~= 'NotificationBox' and c.Name ~= 'LoadedFrame' and v.Visible ~= false) then
+						if (c:IsA('Frame') and v.Name ~= c.Name and c.Name ~= 'Buttons' and c.Name ~= 'NotificationBox' and c.Name ~= 'LoadedFrame' and c.Name ~= 'Secondary' and v.Visible ~= false) then
 							if (Buttons[c.Name] ~= nil) then
 								Funcs:Colorize(Buttons[c.Name], 'Closed')
 							end
@@ -831,6 +883,24 @@ for i,v in pairs(Buttons:getChildren()) do
 					Funcs:Notifications(v)
 				end
 			)
+		end
+	end
+end
+
+for i,v in pairs(Secondary:getChildren()) do
+	if v:IsA('TextButton') then
+		v.MouseEnter:Connect(function()
+			Funcs:MouseHover(v, true)
+			Funcs:Colorize(v, 'Enter')
+		end)
+		v.MouseLeave:Connect(function()
+			Funcs:MouseHover(v, false)
+			Funcs:Colorize(v, 'Leave')
+		end)
+		if (v.Name == 'Shutdown') then
+			v.MouseButton1Click:Connect(function()
+				Funcs:Shutdown()
+			end)
 		end
 	end
 end
@@ -1293,7 +1363,7 @@ GetMouse.KeyDown:Connect(function(K)
 		Cool.PrefixFocused = true
 		local Button = Buttons[VexAdmin.Name]
 		for index,c in pairs(Out:children()) do
-			if (c:IsA('Frame') and c.Name ~= 'VexAdmin' and c.Name ~= 'Buttons' and c.Name ~= 'NotificationBox' and c.Name ~= 'LoadedFrame' and Button.Visible ~= false) then
+			if (c:IsA('Frame') and c.Name ~= 'VexAdmin' and c.Name ~= 'Buttons' and c.Name ~= 'NotificationBox' and c.Name ~= 'LoadedFrame' and c.Name ~= 'Secondary' and Button.Visible ~= false) then
 				if (Buttons[c.Name] ~= nil) then
 					Funcs:Colorize(Buttons[c.Name], 'Closed')
 				end
