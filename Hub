@@ -1,3 +1,5 @@
+if (game.CoreGui:FindFirstChild('Vex')) then return end
+
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService('RunService')
 local PlayersService = game:GetService('Players')
