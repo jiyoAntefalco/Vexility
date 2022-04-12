@@ -466,7 +466,7 @@ TotalCount.Text = string.match(Decoded['count'], '%d+')
 Events.FriendsCountChanged = TotalCount:GetPropertyChangedSignal('Text'):Connect(function()
 	local GetNumbers = string.match(Decoded['count'], '%d+')
 	TotalCount.Text = GetNumbers
-end)]]
+end)
 
 AccAge.Text = tostring(PlayersService.LocalPlayer.AccountAge)
 Events.UserIDChanged = UserIDText:GetPropertyChangedSignal('Text'):Connect(function()
