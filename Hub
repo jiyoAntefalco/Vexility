@@ -8,7 +8,7 @@ local Lighting = game:GetService('Lighting')
 local SoundService = game:GetService('SoundService')
 local StatsService = game:GetService('Stats')
 local Ver = '1.1'
-local Source = game:GetObjects('rbxassetid://9316886202')
+local Source = --[[{script.Parent}]] game:GetObjects('rbxassetid://9316886202')
 local Cloned = Source[1]:Clone()
 
 local GetMouse = PlayersService.LocalPlayer:GetMouse()
@@ -42,7 +42,7 @@ local ResultText = VexAdmin.ResultText
 local Profile = MainProfile.Profile
 
 local ScriptHub = Out.ScriptHub
-local Statistic = Out.Statistic
+local Statistics = Out.Statistics
 
 local LastUpdated = UpdateInfo.LastUpdated
 local Information = UpdateInfo.UpdateInfo
@@ -89,7 +89,7 @@ local Sizes = {
 	['Notification'] = UDim2.new(0, 245,0, 72),
 	['ClosedNotification'] = UDim2.new(0, 0,0, 72),
 	['ScriptHub'] = UDim2.new(0, 578,0, 305),
-	['Statistic'] = UDim2.new(0, 578,0, 305)
+	['Statistics'] = UDim2.new(0, 578,0, 305)
 }
 
 local Colors = {}
@@ -142,8 +142,43 @@ Library.Settings = {
 
 Cool.IsShutdowned = false
 
+function Funcs:ExecuteScriptOnPress(Obj)
+	if (not Obj:FindFirstChild('Execute')) then return end
+	local STRINGS = {
+		['InfiniteYield'] = 'https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source',
+		['DexV3'] = 'https://pastebinp.com/raw/gw8tpD25',
+		['CmdX'] = 'https://raw.githubusercontent.com/CMD-X/CMD-X/master/Source',
+		['DarkHub'] = 'https://darkhub.xyz/remote-script.lua',
+		['OwlHub'] = 'https://raw.githubusercontent.com/CriShoux/OwlHub/master/OwlHub.txt',
+	}
+	local TempCoolDown = false
+	
+	Obj.Execute.MouseButton1Click:Connect(function()
+		if TempCoolDown == false then
+			TempCoolDown = true
+			Obj.Execute.Text = 'Executing...'
+			pcall(function()
+				local String = STRINGS[Obj.Name]
+				loadstring(game:HttpGet(String, true))()
+			end)
+			wait(2)
+			TempCoolDown = false
+			Obj.Execute.Text = 'Execute'
+		end
+	end)
+end
+
+function Funcs:SetScripts()
+	local Scripts = ScriptHub:FindFirstChild('Scripts')
+	Funcs:ExecuteScriptOnPress(Scripts.CmdX)
+	Funcs:ExecuteScriptOnPress(Scripts.InfiniteYield)
+	Funcs:ExecuteScriptOnPress(Scripts.DexV3)
+	Funcs:ExecuteScriptOnPress(Scripts.OwlHub)
+	Funcs:ExecuteScriptOnPress(Scripts.DarkHub)
+end
+
 function Funcs:SetGameInfo()
-	local Scroll = Statistic.Scroll
+	local Scroll = Statistics.Scroll
 	local GameProfile = Scroll.GameProfile
 	local GameRatings = Scroll.GameRatings
 	local Estimation = Scroll.Estimation
@@ -178,18 +213,18 @@ function Funcs:SetGameInfo()
 	Created.Text = (Asset.Created):sub(1, 10)
 
 	Funcs.UniverseId = HttpService:JSONDecode(game:HttpGet("https://api.roblox.com/universes/get-universe-containing-place?placeid="..game.PlaceId))['UniverseId']
-	
+
 	local JSONDecodes = {
 		Favorites = HttpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/'..self.UniverseId..'/favorites/count')),
 		Votes = HttpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/votes?universeIds='..self.UniverseId)),
 		Games = HttpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games?universeIds='..self.UniverseId)),
 	}
-	
+
 	Events.ChangeStats = RunService.RenderStepped:Connect(function()
 		wait()
 		pcall(function()
 			GameDescription.Text = Asset.Description
-			
+
 			Favorites.Text = JSONDecodes.Favorites['favoritesCount']..' | '..Funcs:Abbreviate(JSONDecodes.Favorites['favoritesCount'])
 			for i,v in pairs(JSONDecodes.Votes['data']) do
 				UpVotes.Text = v.upVotes..' | '..Funcs:Abbreviate(v.upVotes)
@@ -262,12 +297,12 @@ function Funcs:Shutdown(Callback)
 		})
 		BlurEffect.Completed:Wait()
 		for index,c in pairs(Out:children()) do
-			if (c.ClassName == 'Frame' and c.Name ~= 'Buttons' and c.Name ~= 'LeftButtons' and c.Name ~= 'Statistic' or c.Name ~= 'ScriptHub' and c.Name ~= 'NotificationBox' and c.Name ~= 'LoadedFrame' and c.Name ~= 'Secondary') then
+			if (c.ClassName == 'Frame' and c.Name ~= 'Buttons' and c.Name ~= 'LeftButtons' and c.Name ~= 'Statistics' or c.Name ~= 'ScriptHub' and c.Name ~= 'NotificationBox' and c.Name ~= 'LoadedFrame' and c.Name ~= 'Secondary') then
 				if (Buttons:FindFirstChild(c.Name)) then
 					Funcs:Colorize(Buttons:FindFirstChild(c.Name), 'Closed')
 				end
 				if (c.ClassName ~= 'LocalScript') then
-				Funcs:Visible(c, 'Close')
+					Funcs:Visible(c, 'Close')
 				end
 			end
 		end
@@ -310,7 +345,7 @@ end]]
 
 function Funcs:CloseFrames(v)
 	for index, c in pairs(Out:children()) do
-		if (c:IsA('Frame') and c.Name ~= 'Buttons' and c.Name ~= 'Statistic' or c.Name ~= 'ScriptHub' and c.Name ~= 'NotificationBox' and c.Name ~= 'LoadedFrame' and v.Visible ~= false) then
+		if (c:IsA('Frame') and c.Name ~= 'Buttons' and c.Name ~= 'Statistics' or c.Name ~= 'ScriptHub' and c.Name ~= 'NotificationBox' and c.Name ~= 'LoadedFrame' and v.Visible ~= false) then
 			if (Buttons:FindFirstChild(c.Name)) then
 				Funcs:Colorize(Buttons:FindFirstChild(c.Name), 'Closed')
 			end
@@ -321,7 +356,7 @@ function Funcs:CloseFrames(v)
 	end
 end
 
-local CurrentSize = UDim2.new(NotificationBox.Size)
+local CurrentSize = NotificationBox.Size
 
 function Funcs:Minimize(v)
 	if (Cool.Minimize == false) then
@@ -344,7 +379,7 @@ function Funcs:Minimize(v)
 		Funcs:Notify('User-Interface', "UI is now draggable, Hold click on the background of the Minimize button (Dark Edges) and move your mouse.", 'Check', 8)
 
 		--[[for index,c in pairs(Out:children()) do
-			if (c:IsA('Frame') and c.Name ~= 'Buttons' and c.Name ~= 'Statistic' or c.Name ~= 'ScriptHub' and c.Name ~= 'NotificationBox' and c.Name ~= 'LoadedFrame' and v.Visible ~= false) then
+			if (c:IsA('Frame') and c.Name ~= 'Buttons' and c.Name ~= 'Statistics' or c.Name ~= 'ScriptHub' and c.Name ~= 'NotificationBox' and c.Name ~= 'LoadedFrame' and v.Visible ~= false) then
 				if (Buttons:FindFirstChild(c.Name)) then
 					Funcs:Colorize(Buttons:FindFirstChild(c.Name), 'Closed')
 				end
@@ -355,16 +390,23 @@ function Funcs:Minimize(v)
 		end]]
 
 		for index,c in pairs(Out:children()) do
-			if (c.ClassName == 'Frame' and c.Name ~= 'Buttons' and c.Name ~= 'LeftButtons' and c.Name ~= 'Statistic' or c.Name ~= 'ScriptHub' and c.Name ~= 'NotificationBox' and c.Name ~= 'LoadedFrame' and c.Name ~= 'Secondary') then
+			if (c.ClassName == 'Frame' and c.Name ~= 'Buttons' and c.Name ~= 'LeftButtons' and c.Name ~= 'NotificationBox' and c.Name ~= 'LoadedFrame' and c.Name ~= 'Secondary') then
 				if (Buttons:FindFirstChild(c.Name)) then
 					Funcs:Colorize(Buttons:FindFirstChild(c.Name), 'Closed')
+				else
+					print('Unable to find.')
 				end
 				if (c.ClassName ~= 'LocalScript' and c.Name ~= 'Secondary' and c.Name ~= 'LeftButtons' and c.Name ~= 'NotificationBox') then
-				Funcs:Visible(c, 'Close')
+					Funcs:Visible(c, 'Close')
 				end
 			end
 		end
-		
+		for index,c in pairs(LeftButtons:children()) do
+			if (c.ClassName == 'TextButton' and c.Name ~= 'Avatar') then
+				Funcs:Colorize(c, 'Closed')
+			end
+		end
+
 		NotificationBox.Visible = true
 		NotificationBox.Size = CurrentSize
 
@@ -380,7 +422,7 @@ function Funcs:Minimize(v)
 
 		Secondary.Visible = not Cool.Minimize
 		LeftButtons.Visible = not Cool.Minimize
-		
+
 		NotificationBox.Visible = true
 		NotificationBox.Size = CurrentSize
 
@@ -476,6 +518,7 @@ function Funcs:LoadFrame(io)
 		wait(1)
 		Funcs:SetGameInfo()
 		Funcs:SetUpdateInfo()
+		Funcs:SetScripts()
 		Funcs:AddSound(SoundService, 6958727243)
 	end
 end
@@ -878,7 +921,7 @@ end
 
 function Funcs:GetColorName(Color, Unknown)
 	local List = {
-		['Dark'] = Color3.fromRGB(21, 20, 26),
+		['Dark'] = Color3.fromRGB(24, 24, 33),
 		['White'] = Color3.fromRGB(255, 255, 255),
 		['Purple'] = Color3.fromRGB(179, 102, 249),
 		['Selected'] = SelectedColor,
@@ -887,7 +930,7 @@ function Funcs:GetColorName(Color, Unknown)
 	}
 	if (SelectingColors and SelectedColor and SelectingColors == Unknown) then
 		Funcs:ChangeAllColorsAtOnce(
-			{SelectedColor.R, SelectedColor.G, SelectedColor.B}
+			SelectedColor
 		)
 		return SelectedColor
 	else
@@ -900,16 +943,16 @@ function Funcs:GetColorName(Color, Unknown)
 end
 
 function Funcs:ChangeAllColorsAtOnce(RGB)
-	for i,v in pairs(Buttons:getChildren()) do
-		if (v:IsA('TextButton')) then
-			local GetHover = v:FindFirstChild('Hover')
-			SelectedColor = Color3.fromRGB(unpack(RGB) or RGB)
-			OldColor = SelectedColor
-			GetHover.BackgroundColor3 = SelectedColor
-			v.BackgroundColor3 = SelectedColor
-			if (SelectedBtn) then
-			SelectedBtn.BackgroundColor3 = SelectedColor
-			end
+	if (SelectedBtn) then
+		local GetHover = SelectedBtn:FindFirstChild('Hover')
+		OldColor = RGB
+		GetHover.BackgroundColor3 = RGB
+		SelectedBtn.BackgroundColor3 = RGB
+		local NotificationBtn = Buttons.Notification
+		if (Cool.NotificationEnabled == false) then
+			local NotifBtnHover = NotificationBtn:FindFirstChild('Hover')
+			NotifBtnHover.BackgroundColor3 = RGB
+			NotificationBtn.BackgroundColor3 = RGB
 		end
 	end
 end
@@ -926,9 +969,9 @@ end
 
 function Funcs:ReSize(io)
 	if (io == 'Selected') then
-		return UDim2.new(0, 11, 0, 11)
+		return UDim2.new(0, 12, 0, 12)
 	elseif (io == 'Deselected') then
-		return UDim2.new(0, 15, 0, 15)
+		return UDim2.new(0,16,0,16)
 	end
 end
 
@@ -1071,7 +1114,7 @@ for i,v in pairs(Buttons:getChildren()) do
 					local Selected = Out[v.Name]
 					Cool.Buttons = true
 					for index,c in pairs(Out:children()) do
-						if (c:IsA('Frame') and v.Name ~= c.Name and c.Name ~= 'Buttons' and c.Name ~= 'NotificationBox' and c.Name ~= 'LoadedFrame' and c.Name ~= 'Secondary' and c.Name ~= 'LeftButtons' and c.Name ~= 'ScriptHub' and c.Name ~= 'Statistic' and v.Visible ~= false) then
+						if (c:IsA('Frame') and v.Name ~= c.Name and c.Name ~= 'Buttons' and c.Name ~= 'NotificationBox' and c.Name ~= 'LoadedFrame' and c.Name ~= 'Secondary' and c.Name ~= 'LeftButtons' and c.Name ~= 'ScriptHub' and c.Name ~= 'Statistics' and v.Visible ~= false) then
 							if (Buttons[c.Name] ~= nil) then
 								Funcs:Colorize(Buttons[c.Name], 'Closed')
 							end
@@ -1089,7 +1132,7 @@ for i,v in pairs(Buttons:getChildren()) do
 					Funcs:Colorize(v, 'Opened')
 					Funcs:Visible(Selected, 'Open')
 					Selected.Visible = true
-					SelectedBtn = Selected
+					SelectedBtn = v
 					task.wait()
 					Cool.Buttons = false
 				end
@@ -1134,7 +1177,7 @@ for i,v in pairs(LeftButtons:getChildren()) do
 					end
 				end
 				for index,c in pairs(Out:children()) do
-					if (c:IsA('Frame') and v.Name ~= c.Name and c.Name ~= 'Buttons' and c.Name ~= 'NotificationBox' and c.Name ~= 'LoadedFrame' and c.Name ~= 'Secondary' and c.Name ~= 'LeftButtons' and c.Name ~= 'ScriptHub' and c.Name ~= 'Statistic' and v.Visible ~= false) then
+					if (c:IsA('Frame') and v.Name ~= c.Name and c.Name ~= 'Buttons' and c.Name ~= 'NotificationBox' and c.Name ~= 'LoadedFrame' and c.Name ~= 'Secondary' and c.Name ~= 'LeftButtons' and c.Name ~= 'ScriptHub' and c.Name ~= 'Statistics' and v.Visible ~= false) then
 						if (Buttons[c.Name] ~= nil) then
 							Funcs:Colorize(Buttons[c.Name], 'Closed')
 						end
@@ -1146,7 +1189,7 @@ for i,v in pairs(LeftButtons:getChildren()) do
 					local Selected = Out[v.Name]
 					Funcs:Visible(Selected, 'Open')
 					Selected.Visible = true
-					SelectedBtn = Selected
+					SelectedBtn = v
 				end
 				task.wait()
 				Cool.LeftButtons = false
@@ -1192,7 +1235,7 @@ Funcs:AddCommandOnList('f3x',
 	},
 	function(Speaker)
 		pcall(function() loadstring(game:GetObjects("rbxassetid://6695644299")[1].Source)() end)
-		Funcs:Notify('F3x Building Tool', 'Lended F3X tool, This is a client only Btool that players cannot see.', 'Check', 5.5)
+		Funcs:Notify('F3X Building Tool', 'Lended F3X tool, This is a client only Btool that players cannot see.', 'Check', 5.5)
 	end
 )
 
@@ -1481,31 +1524,40 @@ function Funcs:GetColorNumberFromBox(Obj)
 	end
 end
 
-Funcs:TextBoxNumbersOnly(R, 255).FocusLost:Connect(function()
-	SelectingColors = true
-	wait()
-	SelectedColor = Color3.fromRGB(Funcs:GetColorNumberFromBox(R), Funcs:GetColorNumberFromBox(G), Funcs:GetColorNumberFromBox(B))
-	Funcs:ChangeAllColorsAtOnce({Funcs:GetColorNumberFromBox(R), Funcs:GetColorNumberFromBox(G), Funcs:GetColorNumberFromBox(B)})
-	Funcs:Animate(MainProfile, 1, 'Cubic', 'Out', {BackgroundColor3 = Funcs:GetColorName('Purple', true)}):Play()
-	R.Text = Funcs:GetColorNumberFromBox(R)
+Funcs:TextBoxNumbersOnly(R, 255).FocusLost:Connect(function(Enter)
+	if (Enter) then
+		SelectingColors = true
+		wait(1)
+		SelectedColor = Color3.fromRGB(Funcs:GetColorNumberFromBox(R), Funcs:GetColorNumberFromBox(G), Funcs:GetColorNumberFromBox(B))
+		Funcs:ChangeAllColorsAtOnce(SelectedColor)
+		Funcs:Animate(MainProfile, 1, 'Cubic', 'Out', {BackgroundColor3 = Funcs:GetColorName('Purple', true)}):Play()
+	else
+		R.Text = Funcs:GetColorNumberFromBox(R)
+	end
 end)
 
-Funcs:TextBoxNumbersOnly(G, 255).FocusLost:Connect(function()
-	SelectingColors = true
-	wait()
-	SelectedColor = Color3.fromRGB(Funcs:GetColorNumberFromBox(R), Funcs:GetColorNumberFromBox(G), Funcs:GetColorNumberFromBox(B))
-	Funcs:ChangeAllColorsAtOnce({Funcs:GetColorNumberFromBox(R), Funcs:GetColorNumberFromBox(G), Funcs:GetColorNumberFromBox(B)})
-	Funcs:Animate(MainProfile, 1, 'Cubic', 'Out', {BackgroundColor3 = Funcs:GetColorName('Purple', true)}):Play()
-	G.Text = Funcs:GetColorNumberFromBox(G)
+Funcs:TextBoxNumbersOnly(G, 255).FocusLost:Connect(function(Enter)
+	if (Enter) then
+		SelectingColors = true
+		wait(1)
+		SelectedColor = Color3.fromRGB(Funcs:GetColorNumberFromBox(R), Funcs:GetColorNumberFromBox(G), Funcs:GetColorNumberFromBox(B))
+		Funcs:ChangeAllColorsAtOnce(SelectedColor)
+		Funcs:Animate(MainProfile, 1, 'Cubic', 'Out', {BackgroundColor3 = Funcs:GetColorName('Purple', true)}):Play()
+	else
+		G.Text = Funcs:GetColorNumberFromBox(G)
+	end
 end)
 
-Funcs:TextBoxNumbersOnly(B, 255).FocusLost:Connect(function()
-	SelectingColors = true
-	wait()
-	SelectedColor = Color3.fromRGB(Funcs:GetColorNumberFromBox(R), Funcs:GetColorNumberFromBox(G), Funcs:GetColorNumberFromBox(B))
-	Funcs:ChangeAllColorsAtOnce({Funcs:GetColorNumberFromBox(R), Funcs:GetColorNumberFromBox(G), Funcs:GetColorNumberFromBox(B)})
-	Funcs:Animate(MainProfile, 1, 'Cubic', 'Out', {BackgroundColor3 = Funcs:GetColorName('Purple', true)}):Play()
-	B.Text = Funcs:GetColorNumberFromBox(B)
+Funcs:TextBoxNumbersOnly(B, 255).FocusLost:Connect(function(Enter)
+	if (Enter) then
+		SelectingColors = true
+		wait(1)
+		SelectedColor = Color3.fromRGB(Funcs:GetColorNumberFromBox(R), Funcs:GetColorNumberFromBox(G), Funcs:GetColorNumberFromBox(B))
+		Funcs:ChangeAllColorsAtOnce(SelectedColor)
+		Funcs:Animate(MainProfile, 1, 'Cubic', 'Out', {BackgroundColor3 = Funcs:GetColorName('Purple', true)}):Play()
+	else
+		B.Text = Funcs:GetColorNumberFromBox(B)
+	end
 end)
 
 Cool.CopyClipBoardOne = false
@@ -1595,7 +1647,7 @@ Events.PrefixFocusedEvent = GetMouse.KeyDown:Connect(function(K)
 		Cool.PrefixFocused = true
 		local Button = Buttons[VexAdmin.Name]
 		for index,c in pairs(Out:children()) do
-			if (c:IsA('Frame') and c.Name ~= 'VexAdmin' and c.Name ~= 'Buttons' and c.Name ~= 'LeftButtons' and c.Name ~= 'Statistic' or c.Name ~= 'ScriptHub' and c.Name ~= 'NotificationBox' and c.Name ~= 'LoadedFrame' and c.Name ~= 'Secondary' and Button.Visible ~= false) then
+			if (c:IsA('Frame') and c.Name ~= 'VexAdmin' and c.Name ~= 'Buttons' and c.Name ~= 'LeftButtons' and c.Name ~= 'Statistics' or c.Name ~= 'ScriptHub' and c.Name ~= 'NotificationBox' and c.Name ~= 'LoadedFrame' and c.Name ~= 'Secondary' and Button.Visible ~= false) then
 				if (Buttons:FindFirstChild(c.Name)) then
 					Funcs:Colorize(Buttons:FindFirstChild(c.Name), 'Closed')
 				end
