@@ -7,7 +7,7 @@ local MarketplaceService = game:GetService('MarketplaceService')
 local Lighting = game:GetService('Lighting')
 local SoundService = game:GetService('SoundService')
 local StatsService = game:GetService('Stats')
-local Ver = '1.1'
+local Ver = '1.2'
 local Source = --[[{script.Parent}]] game:GetObjects('rbxassetid://9316886202')
 local Cloned = Source[1]:Clone()
 
@@ -146,7 +146,7 @@ function Funcs:ExecuteScriptOnPress(Obj)
 	if (not Obj:FindFirstChild('Execute')) then return end
 	local STRINGS = {
 		['InfiniteYield'] = 'https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source',
-		['DexV3'] = 'https://pastebinp.com/raw/gw8tpD25',
+		['DexV3'] = 'https://pastebin.com/raw/gw8tpD25',
 		['CmdX'] = 'https://raw.githubusercontent.com/CMD-X/CMD-X/master/Source',
 		['DarkHub'] = 'https://darkhub.xyz/remote-script.lua',
 		['OwlHub'] = 'https://raw.githubusercontent.com/CriShoux/OwlHub/master/OwlHub.txt',
@@ -569,7 +569,7 @@ function Funcs:SetUpdateInfo()
 	task.spawn(function()
 		if pcall(function() loadstring(game:HttpGet('https://raw.githubusercontent.com/GioCruz11/Vexility/main/Version', true))() end) then
 			if (Ver ~= Version) then
-				Funcs:Notify('Outdated Script', "This script is outdated, get the script at ", 'Blank', 5)
+				Funcs:Notify('Outdated Script', "This script is outdated, get the script at <font color='rgb("..Funcs:GetSelectedColorFromString()..")'>https://github.com/GioCruz11/Vexility</font>", 'Blank', 5)
 				LastUpdated.Text = DateUpdated
 			else
 				Information.Text = UpdateInformation
