@@ -1,6 +1,8 @@
-Version = '1.1'
-DateUpdated = '4/10/2022'
+Version = '1.2'
+DateUpdated = '4/13/2022'
 UpdateInformation = [[
-- Shutdown Button:
-Shuts down the Hub, You'll have to re-execute the script to get it back, Go to the GitHub page to get the script.
+- Smooth Scrolling for Scrolling Frames.
+- Added New Interactions on Right Screen:
+- Statistic,
+- Script Hubs
 ]]
