@@ -56,7 +56,7 @@ local UIObjects = VexAdmin.UIObjects
 local CommandFrame = VexAdmin.CommandFrame
 local CommandBox = CommandFrame.CommandBox
 
---[[local Encode = game:HttpGet('https://friends.roblox.com/v1/users/'..PlayersService.LocalPlayer.UserId..'/friends/count', true)]]
+local Decode = game:HttpGet('https://friends.roblox.com/v1/users/'..PlayersService.LocalPlayer.UserId..'/friends/count', true)
 
 local Prefixes = {}
 Prefixes.Prefix = (';')
@@ -459,10 +459,12 @@ Events.UserIDChanged = nil
 Events.ImageChanged = nil
 Events.FriendsCountChanged = nil
 
---[[TotalCount.Text = string.match(Encode, '%d+')
+local Decoded = HttpService:JSONDecode(Decode)
+
+TotalCount.Text = string.match(Decoded['count'], '%d+')
 
 Events.FriendsCountChanged = TotalCount:GetPropertyChangedSignal('Text'):Connect(function()
-	local GetNumbers = string.match(Encode, '%d+')
+	local GetNumbers = string.match(Decoded['count'], '%d+')
 	TotalCount.Text = GetNumbers
 end)]]
 
