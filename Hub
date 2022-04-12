@@ -9,6 +9,7 @@ local SoundService = game:GetService('SoundService')
 local StatsService = game:GetService('Stats')
 local Ver = '1.2'
 local Source = --[[{script.Parent}]] game:GetObjects('rbxassetid://9316886202')
+local SmoothScroll = loadstring(game:HttpGet('https://raw.githubusercontent.com/GioCruz11/Vexility/main/Smooth%20Scroll', true))()
 local Cloned = Source[1]:Clone()
 
 local GetMouse = PlayersService.LocalPlayer:GetMouse()
@@ -313,6 +314,8 @@ function Funcs:Shutdown(Callback)
 		end
 		Buttons.Visible = false
 		Secondary.Visible = false
+		SmoothScroll.Disable(ScriptHub.Scroll)
+		SmoothScroll.Disable(Statistics.Scroll)
 		if pcall(function()
 				Funcs:Notify('Shutdown', "Vex Hub has been shutdowned successfully, You can execute the script again If you desire to bring it back.", 'Check', 4)
 			end) then
@@ -501,6 +504,10 @@ function Funcs:LoadFrame(io)
 				Size = 0;
 			}
 		)
+		
+		SmoothScroll.Enable(Statistics.Scroll, 10, 0.97, false, 'Y')
+		SmoothScroll.Enable(ScriptHub.Scripts, 10, 0.97, false, 'Y')
+		
 		AnimationTwo:Play()
 		AnimationThree:Play()
 		AnimationFour:Play()
