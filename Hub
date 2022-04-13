@@ -19,8 +19,6 @@ local Out = Source[1]
 
 repeat wait() print('Finding Vex Admin....') until Out:FindFirstChild('VexAdmin')
 
-local SmoothScroll = require(Out.SmoothScroll)
-
 pcall(function() Out.Parent = game.CoreGui Out.ResetOnSpawn = false end)
 
 local VexAdmin = Out.VexAdmin
