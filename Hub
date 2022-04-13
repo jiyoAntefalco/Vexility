@@ -11,7 +11,6 @@ local SoundService = game:GetService('SoundService')
 local StatsService = game:GetService('Stats')
 local Ver = '1.2'
 local Source = --[[{script.Parent}]] game:GetObjects('rbxassetid://9316886202')
-local Cloned = Source[1]:Clone()
 
 local GetMouse = PlayersService.LocalPlayer:GetMouse()
 
