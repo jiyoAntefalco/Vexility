@@ -316,7 +316,7 @@ function Funcs:Shutdown(Callback)
 		end
 		Buttons.Visible = false
 		Secondary.Visible = false
-		SmoothScroll.Disable(ScriptHub.Scroll)
+		SmoothScroll.Disable(ScriptHub.Scripts)
 		SmoothScroll.Disable(Statistics.Scroll)
 		if pcall(function()
 				Funcs:Notify('Shutdown', "Vex Hub has been shutdowned successfully, You can execute the script again If you desire to bring it back.", 'Check', 4)
