@@ -302,7 +302,7 @@ function Funcs:Shutdown(Callback)
 				if (Buttons:FindFirstChild(c.Name)) then
 					Funcs:Colorize(Buttons:FindFirstChild(c.Name), 'Closed')
 				end
-				if (c.ClassName ~= 'LocalScript') then
+				if (c.ClassName ~= 'LocalScript' and c.ClassName ~= 'ModuleScript') then
 					Funcs:Visible(c, 'Close')
 				end
 			end
