@@ -1,4 +1,4 @@
-if (game.CoreGui:FindFirstChild('Vex') then print('You already have this.') return end
+if (game.CoreGui:FindFirstChild('Vex')) then print('You already have this.') return end
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService('RunService')
 local PlayersService = game:GetService('Players')
