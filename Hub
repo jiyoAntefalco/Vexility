@@ -1,5 +1,4 @@
-if (game.CoreGui:FindFirstChild('Vex')) then return end
-
+if (game.CoreGui:FindFirstChild('Vex') then print('You already have this.') return end
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService('RunService')
 local PlayersService = game:GetService('Players')
@@ -9,14 +8,17 @@ local MarketplaceService = game:GetService('MarketplaceService')
 local Lighting = game:GetService('Lighting')
 local SoundService = game:GetService('SoundService')
 local StatsService = game:GetService('Stats')
-local Ver = '1.2'
-local Source = --[[{script.Parent}]] game:GetObjects('rbxassetid://9316886202')
+local Ver = '1.3'
+local Source = {script.Parent} game:GetObjects('rbxassetid://9316886202')
+local Cloned = Source[1]:Clone()
 
 local GetMouse = PlayersService.LocalPlayer:GetMouse()
 
 local Out = Source[1]
 
-repeat wait() print('Finding Vex Admin....') until Out:FindFirstChild('VexAdmin')
+repeat wait() print('Finding Vexility Admin and Vexility Hub....') until Out:FindFirstChild('VexAdmin')
+
+warn('Preparing to load Vexility Hub...')
 
 pcall(function() Out.Parent = game.CoreGui Out.ResetOnSpawn = false end)
 
@@ -44,6 +46,7 @@ local Profile = MainProfile.Profile
 
 local ScriptHub = Out.ScriptHub
 local Statistics = Out.Statistics
+local Avatar = Out.Avatar
 
 local LastUpdated = UpdateInfo.LastUpdated
 local Information = UpdateInfo.UpdateInfo
@@ -78,6 +81,7 @@ local Clipboards = {}
 local Indexes = {}
 local Commands = {}
 local Library = {}
+local Animations = {}
 local Sizes = {
 	['GitHub'] = UDim2.new(0, 254, 0, 305),
 	['UpdateInfo'] = UDim2.new(0, 254, 0, 305),
@@ -90,7 +94,8 @@ local Sizes = {
 	['Notification'] = UDim2.new(0, 245,0, 72),
 	['ClosedNotification'] = UDim2.new(0, 0,0, 72),
 	['ScriptHub'] = UDim2.new(0, 578,0, 305),
-	['Statistics'] = UDim2.new(0, 578,0, 305)
+	['Statistics'] = UDim2.new(0, 578,0, 305),
+	['Avatar'] = UDim2.new(0, 578,0, 305)
 }
 
 local Colors = {}
@@ -143,6 +148,178 @@ Library.Settings = {
 
 Cool.IsShutdowned = false
 
+
+function Funcs:SetUpAnimations()
+	
+	Animations['Ninja'] = {
+		['Idle'] = 656117400,
+		['IdleTwo'] = 656118341,
+		['Walk'] = 656121766,
+		['Run'] = 656118852,
+		['Jump'] = 656117878,
+		['Climb'] = 656114359,
+		['Fall'] = 656115606,
+	}
+
+	Animations['Toy'] = {
+		['Idle'] = 782841498,
+		['IdleTwo'] = 782845736,
+		['Walk'] = 782843345,
+		['Run'] = 782842708,
+		['Jump'] = 782847020,
+		['Climb'] = 782843869,
+		['Fall'] = 782846423,
+	}
+
+	Animations['Zombie'] = {
+		['Idle'] = 616158929,
+		['IdleTwo'] = 616160636,
+		['Walk'] = 616168032,
+		['Run'] = 616163682,
+		['Jump'] = 616161997,
+		['Climb'] = 616156119,
+		['Fall'] = 616157476,
+	}
+	
+	Animations['Werewolf'] = {
+		['Idle'] = 1083195517,
+		['IdleTwo'] = 1083214717,
+		['Walk'] = 1083178339,
+		['Run'] = 1083216690,
+		['Jump'] = 1083218792,
+		['Climb'] = 1083182000,
+		['Fall'] = 1083189019,
+	}
+
+	Animations['Mage'] = {
+		['Idle'] = 707742142,
+		['IdleTwo'] = 707855907,
+		['Walk'] = 707897309,
+		['Run'] = 707861613,
+		['Jump'] = 707853694,
+		['Climb'] = 707826056,
+		['Fall'] = 707829716,
+	}
+	
+	local Options = Avatar.Options
+	local AnimationChanger = Options.AnimationChanger
+	local Cools = {}
+	
+	for NameOfAnimation, Pack in pairs(Animations) do
+		for TypeAnim, AnimationIDs in pairs(Pack) do
+			if (AnimationChanger:FindFirstChild(TypeAnim..'AnimationIDs')) then
+				
+				if (AnimationChanger:FindFirstChild(TypeAnim..'List')) then print('Found') end
+				
+				local TextBox = AnimationChanger:FindFirstChild(TypeAnim..'Animation')
+				local Obj = AnimationChanger:FindFirstChild(TypeAnim..'AnimationIDs')
+				local TextButtons = Obj:FindFirstChild('TextButtons')
+				local ClonedButton = TextButtons:FindFirstChild('Button'):Clone()
+				local AnimationsFrame = AnimationChanger:FindFirstChild(TypeAnim..'List')
+				local ConfirmBtn = AnimationChanger:FindFirstChild(TypeAnim..'AnimationConfirm')
+				local ButtonTemporary = false
+				local ConfirmationCoolDown = false
+				
+				ClonedButton.Visible = true
+				ClonedButton.Text = NameOfAnimation..' Animation'
+				ClonedButton.Parent = AnimationsFrame
+				ClonedButton.MouseButton1Click:Connect(function()
+					if (ButtonTemporary == false) then
+						ButtonTemporary = true
+						TextBox.Text = AnimationIDs
+						AnimationsFrame.Visible = false
+						wait(2)
+						ButtonTemporary = false
+					end
+				end)
+				
+				local AnimType = TypeAnim
+				local PLR = PlayersService.LocalPlayer
+				
+				ConfirmBtn.MouseButton1Click:Connect(function()
+					Funcs:RippleButton(ConfirmBtn)
+					if (TextBox.Text:match('.') and ConfirmationCoolDown == false) then
+						ConfirmationCoolDown = true
+						local String = TextBox.Text
+						if typeof(tonumber(TextBox.Text) == 'number') then
+							if (PLR.Character) then
+								local Character = PLR.Character
+								if (Character:FindFirstChild('Animate')) then
+									local Num = tonumber(String)
+									local Success, Fail = pcall(function()
+										wait()
+										ConfirmBtn.Text = '...'
+										local Animate = Character:FindFirstChild('Animate')
+										if (Animate:FindFirstChild(TypeAnim:lower())) then
+											local BJ = Animate:FindFirstChild(TypeAnim:lower())
+											if (BJ:FindFirstChild('Animation1')) then
+												local BJ2 = BJ:FindFirstChild('Animation1')
+												BJ2.AnimationId = 'http://www.roblox.com/asset/?id='..Num
+											elseif (BJ:FindFirstChild('Animation2')) then
+												local BJ2 = BJ:FindFirstChild('Animation1')
+												BJ2.AnimationId = 'http://www.roblox.com/asset/?id='..Num
+											elseif (BJ:FindFirstChild(TypeAnim..'Anim')) then
+												local BJ2 = BJ:FindFirstChild(TypeAnim..'Anim')
+												BJ2.AnimationId = 'http://www.roblox.com/asset/?id='..Num
+											end
+										end
+									end)
+									wait(1)
+									if (Success) then
+										ConfirmBtn.Text = 'Success'
+										wait(2)
+										ConfirmBtn.Text = 'Confirm'
+										ConfirmationCoolDown = false
+									else
+										ConfirmBtn.Text = 'Error'
+										wait(2)
+										ConfirmBtn.Text = 'Confirm'
+										ConfirmationCoolDown = false
+									end
+								end
+							end
+						else
+							TextBox.TextEditable = false
+							TextBox.Text = 'Please provide a number.'
+							wait(2)
+							TextBox.TextEditable = true
+							TextBox.Text = ''
+						end
+					else
+						ConfirmationCoolDown = true
+						TextBox.TextEditable = false
+						TextBox.Text = 'Please Fill The Box.'
+						wait(2)
+						TextBox.Text = ''
+						TextBox.TextEditable = true
+					end
+				end)
+				
+				Cools[TypeAnim] = false
+				
+				Obj.MouseButton1Click:Connect(function()
+					if (Cools[TypeAnim] == false) then
+						Cools[TypeAnim] = true
+						AnimationsFrame.Visible = true
+						for NameOfAnimation2, Pack2 in pairs(Animations) do
+							for TypeAnim2, AnimationIDs2 in pairs(Pack) do
+								if (TypeAnim ~= TypeAnim2) then
+									local Selected = AnimationChanger:FindFirstChild(TypeAnim2..'List')
+									Selected.Visible = false
+									Cools[TypeAnim2] = false
+								end
+							end
+						end
+					elseif (Cools[TypeAnim] == true) then
+						Cools[TypeAnim] = false
+						AnimationsFrame.Visible = false
+					end
+				end)
+			end
+		end
+	end
+end
+
 function Funcs:ExecuteScriptOnPress(Obj)
 	if (not Obj:FindFirstChild('Execute')) then return end
 	local STRINGS = {
@@ -153,7 +330,7 @@ function Funcs:ExecuteScriptOnPress(Obj)
 		['OwlHub'] = 'https://raw.githubusercontent.com/CriShoux/OwlHub/master/OwlHub.txt',
 	}
 	local TempCoolDown = false
-	
+
 	Obj.Execute.MouseButton1Click:Connect(function()
 		if TempCoolDown == false then
 			TempCoolDown = true
@@ -298,11 +475,11 @@ function Funcs:Shutdown(Callback)
 		})
 		BlurEffect.Completed:Wait()
 		for index,c in pairs(Out:children()) do
-			if (c.ClassName == 'Frame' and c.Name ~= 'Buttons' and c.Name ~= 'LeftButtons' and c.Name ~= 'Statistics' or c.Name ~= 'ScriptHub' and c.Name ~= 'NotificationBox' and c.Name ~= 'LoadedFrame' and c.Name ~= 'Secondary') then
+			if (c.ClassName == 'Frame' and c.Name ~= 'Statistics' or c.Name ~= 'ScriptHub' and c.Name ~= 'NotificationBox' and c.Name ~= 'LoadedFrame' and c.Name ~= 'Secondary') then
 				if (Buttons:FindFirstChild(c.Name)) then
 					Funcs:Colorize(Buttons:FindFirstChild(c.Name), 'Closed')
 				end
-				if (c.ClassName ~= 'LocalScript' and c.ClassName ~= 'ModuleScript') then
+				if (c.ClassName ~= 'LocalScript' and c.Name ~= 'NotificationBox' and c.Name ~= 'Buttons' and c.Name ~= 'LeftButtons') then
 					Funcs:Visible(c, 'Close')
 				end
 			end
@@ -313,25 +490,26 @@ function Funcs:Shutdown(Callback)
 			end
 		end
 		Buttons.Visible = false
+		LeftButtons.Visible = false
 		Secondary.Visible = false
 		if pcall(function()
 				Funcs:Notify('Shutdown', "Vex Hub has been shutdowned successfully, You can execute the script again If you desire to bring it back.", 'Check', 4)
 			end) then
-			delay(5, function(t)
-				BlurEffectReset:Play()
-				wait(2)
-				script:Destroy()
-				Out:Destroy()
-				warn('[Vex]: Successfully removed.')
-				warn('[LocalScript]: Successfully removed.')
-				if (Callback) then
-					if (PlayersService.LocalPlayer.PlayerGui:FindFirstChild('Vex')) then
-						Callback(false)
-					else
-						Callback(true)
-					end
+			wait(5)
+			BlurEffectReset:Play()
+			wait(2)
+			script:Destroy()
+			Out:Destroy()
+			warn('[Vex]: Successfully removed.')
+			warn('[LocalScript]: Successfully removed.')
+			warn('[RBXScriptConnection]: Successfully disconnected.')
+			if (Callback) then
+				if (PlayersService.LocalPlayer.PlayerGui:FindFirstChild('Vex')) then
+					Callback(false)
+				else
+					Callback(true)
 				end
-			end)
+			end
 		end
 	end
 end
@@ -403,7 +581,7 @@ function Funcs:Minimize(v)
 			end
 		end
 		for index,c in pairs(LeftButtons:children()) do
-			if (c.ClassName == 'TextButton' and c.Name ~= 'Avatar') then
+			if (c.ClassName == 'TextButton') then
 				Funcs:Colorize(c, 'Closed')
 			end
 		end
@@ -502,7 +680,7 @@ function Funcs:LoadFrame(io)
 				Size = 0;
 			}
 		)
-		
+
 		AnimationTwo:Play()
 		AnimationThree:Play()
 		AnimationFour:Play()
@@ -518,6 +696,7 @@ function Funcs:LoadFrame(io)
 		wait(2.15)
 		Funcs:Greetings()
 		wait(1)
+		Funcs:SetUpAnimations()
 		Funcs:SetGameInfo()
 		Funcs:SetUpdateInfo()
 		Funcs:SetScripts()
@@ -758,13 +937,13 @@ function Funcs:TextPopUp(o, io)
 			local CopiedToClipBoardTextOne = GitHub.CopiedToClipboard1
 			local TextTransparency = Funcs:Animate(CopiedToClipBoardTextOne, 0.6, 'Quad', 'Out', {TextTransparency = 0})
 
-			CopiedToClipBoardTextOne.TextColor3 = Funcs:GetColorName('Purple', true)
+			CopiedToClipBoardTextOne.TextColor3 = Funcs:GetColorName('Blue', true)
 			TextTransparency:Play()
 		elseif (io == false) then
 			local CopiedToClipBoardTextTwo = GitHub.CopiedToClipboard1
 			local TextTransparency = Funcs:Animate(CopiedToClipBoardTextTwo, 0.6, 'Quad', 'Out', {TextTransparency = 1})
 
-			CopiedToClipBoardTextTwo.TextColor3 = Funcs:GetColorName('Purple', true)
+			CopiedToClipBoardTextTwo.TextColor3 = Funcs:GetColorName('Blue', true)
 			TextTransparency:Play()
 		end
 	elseif (o == 'Two') then
@@ -772,13 +951,13 @@ function Funcs:TextPopUp(o, io)
 			local CopiedToClipBoardTextOne = GitHub.CopiedToClipboard2
 			local TextTransparency = Funcs:Animate(CopiedToClipBoardTextOne, 0.6, 'Quad', 'Out', {TextTransparency = 0})
 
-			CopiedToClipBoardTextOne.TextColor3 = Funcs:GetColorName('Purple', true)
+			CopiedToClipBoardTextOne.TextColor3 = Funcs:GetColorName('Blue', true)
 			TextTransparency:Play()
 		elseif (io == false) then
 			local CopiedToClipBoardTextTwo = GitHub.CopiedToClipboard2
 			local TextTransparency = Funcs:Animate(CopiedToClipBoardTextTwo, 0.6, 'Quad', 'Out', {TextTransparency = 1})
 
-			CopiedToClipBoardTextTwo.TextColor3 = Funcs:GetColorName('Purple', true)
+			CopiedToClipBoardTextTwo.TextColor3 = Funcs:GetColorName('Blue', true)
 			TextTransparency:Play()
 		end
 	end
@@ -790,7 +969,7 @@ function Funcs:ColorizeCopyClipboard(Obj, io)
 		local Image = Obj:FindFirstChildOfClass('ImageLabel')
 		local ColorUIStroke = Funcs:Animate(UIStroke, 0.6, 'Quad', 'Out', {Color = Funcs:GetColorName('Darker')})
 		local ImageColor = Funcs:Animate(Image, 0.6, 'Quad', 'Out', {ImageColor3 = Funcs:GetColorName('Darker')})
-		local BackgroundColor = Funcs:Animate(Obj, 0.6, 'Quad', 'Out', {BackgroundColor3 = Funcs:GetColorName('Purple', true)})
+		local BackgroundColor = Funcs:Animate(Obj, 0.6, 'Quad', 'Out', {BackgroundColor3 = Funcs:GetColorName('Blue', true)})
 
 		ColorUIStroke:Play()
 		ImageColor:Play()
@@ -928,7 +1107,8 @@ function Funcs:GetColorName(Color, Unknown)
 		['Purple'] = Color3.fromRGB(179, 102, 249),
 		['Selected'] = SelectedColor,
 		['Green'] = Color3.fromRGB(98, 255, 74),
-		['Darker'] = Color3.fromRGB(15, 15, 15)
+		['Darker'] = Color3.fromRGB(15, 15, 15),
+		['Blue'] = Color3.fromRGB(188, 182, 255)
 	}
 	if (SelectingColors and SelectedColor and SelectingColors == Unknown) then
 		Funcs:ChangeAllColorsAtOnce(
@@ -1054,6 +1234,10 @@ function Funcs:Colorize(Obj, io)
 			Selected = 'rbxassetid://9347096723',
 			Deselected = 'rbxassetid://9346708601'
 		},
+		['Avatar'] = {
+			Selected = 'rbxassetid://9359360677',
+			Deselected = 'rbxassetid://9359379948'
+		}
 	}
 
 	if (io == 'Closed' or io == 'Leave') then
@@ -1080,9 +1264,9 @@ function Funcs:Colorize(Obj, io)
 	elseif (io == 'Opened' or io == 'Enter') then
 		local Icon = Obj:FindFirstChild('Icon')
 		local HoverText = Obj:FindFirstChild('Hover')
-		local BackgroundColor = Funcs:Animate(Obj, 1, 'Cubic', 'Out', {BackgroundColor3 = Funcs:GetColorName('Purple', true)})
+		local BackgroundColor = Funcs:Animate(Obj, 1, 'Cubic', 'Out', {BackgroundColor3 = Funcs:GetColorName('Blue', true)})
 		local ImageColor = Funcs:Animate(Icon, 1, 'Cubic', 'Out', {ImageColor3 = Funcs:GetColorName('Dark')})
-		local ColorizeHoverBackground = Funcs:Animate(HoverText, 1, 'Cubic', 'Out', {BackgroundColor3 = Funcs:GetColorName('Purple', true)})
+		local ColorizeHoverBackground = Funcs:Animate(HoverText, 1, 'Cubic', 'Out', {BackgroundColor3 = Funcs:GetColorName('Blue', true)})
 		local ColorizeHoverText = Funcs:Animate(HoverText, 1, 'Cubic', 'Out', {TextColor3 = Funcs:GetColorName('Dark')})
 		local SizeIcon =  Funcs:Animate(Icon, 0.6, 'Elastic', 'Out', {Size = Funcs:ReSize('Selected')})
 
@@ -1116,7 +1300,7 @@ for i,v in pairs(Buttons:getChildren()) do
 					local Selected = Out[v.Name]
 					Cool.Buttons = true
 					for index,c in pairs(Out:children()) do
-						if (c:IsA('Frame') and v.Name ~= c.Name and c.Name ~= 'Buttons' and c.Name ~= 'NotificationBox' and c.Name ~= 'LoadedFrame' and c.Name ~= 'Secondary' and c.Name ~= 'LeftButtons' and c.Name ~= 'ScriptHub' and c.Name ~= 'Statistics' and v.Visible ~= false) then
+						if (c:IsA('Frame') and v.Name ~= c.Name and c.Name ~= 'Buttons' and c.Name ~= 'NotificationBox' and c.Name ~= 'LoadedFrame' and c.Name ~= 'Secondary' and c.Name ~= 'LeftButtons' and c.Name ~= 'ScriptHub' and c.Name ~= 'Statistics' and c.Name ~= 'Avatar' and v.Visible ~= false) then
 							if (Buttons[c.Name] ~= nil) then
 								Funcs:Colorize(Buttons[c.Name], 'Closed')
 							end
@@ -1179,7 +1363,7 @@ for i,v in pairs(LeftButtons:getChildren()) do
 					end
 				end
 				for index,c in pairs(Out:children()) do
-					if (c:IsA('Frame') and v.Name ~= c.Name and c.Name ~= 'Buttons' and c.Name ~= 'NotificationBox' and c.Name ~= 'LoadedFrame' and c.Name ~= 'Secondary' and c.Name ~= 'LeftButtons' and c.Name ~= 'ScriptHub' and c.Name ~= 'Statistics' and v.Visible ~= false) then
+					if (c:IsA('Frame') and v.Name ~= c.Name and c.Name ~= 'Buttons' and c.Name ~= 'NotificationBox' and c.Name ~= 'LoadedFrame' and c.Name ~= 'Secondary' and c.Name ~= 'LeftButtons' and c.Name ~= 'ScriptHub' and c.Name ~= 'Statistics' and c.Name ~= 'Avatar' and v.Visible ~= false) then
 						if (Buttons[c.Name] ~= nil) then
 							Funcs:Colorize(Buttons[c.Name], 'Closed')
 						end
@@ -1187,12 +1371,10 @@ for i,v in pairs(LeftButtons:getChildren()) do
 					end
 				end
 				Funcs:Colorize(v, 'Opened')
-				if (Out[v.Name].Name ~= 'Avatar') then
-					local Selected = Out[v.Name]
-					Funcs:Visible(Selected, 'Open')
-					Selected.Visible = true
-					SelectedBtn = v
-				end
+				local Selected = Out[v.Name]
+				Funcs:Visible(Selected, 'Open')
+				Selected.Visible = true
+				SelectedBtn = v
 				task.wait()
 				Cool.LeftButtons = false
 			end
@@ -1532,7 +1714,7 @@ Funcs:TextBoxNumbersOnly(R, 255).FocusLost:Connect(function(Enter)
 		wait(1)
 		SelectedColor = Color3.fromRGB(Funcs:GetColorNumberFromBox(R), Funcs:GetColorNumberFromBox(G), Funcs:GetColorNumberFromBox(B))
 		Funcs:ChangeAllColorsAtOnce(SelectedColor)
-		Funcs:Animate(MainProfile, 1, 'Cubic', 'Out', {BackgroundColor3 = Funcs:GetColorName('Purple', true)}):Play()
+		Funcs:Animate(MainProfile, 1, 'Cubic', 'Out', {BackgroundColor3 = Funcs:GetColorName('Blue', true)}):Play()
 	else
 		R.Text = Funcs:GetColorNumberFromBox(R)
 	end
@@ -1544,7 +1726,7 @@ Funcs:TextBoxNumbersOnly(G, 255).FocusLost:Connect(function(Enter)
 		wait(1)
 		SelectedColor = Color3.fromRGB(Funcs:GetColorNumberFromBox(R), Funcs:GetColorNumberFromBox(G), Funcs:GetColorNumberFromBox(B))
 		Funcs:ChangeAllColorsAtOnce(SelectedColor)
-		Funcs:Animate(MainProfile, 1, 'Cubic', 'Out', {BackgroundColor3 = Funcs:GetColorName('Purple', true)}):Play()
+		Funcs:Animate(MainProfile, 1, 'Cubic', 'Out', {BackgroundColor3 = Funcs:GetColorName('Blue', true)}):Play()
 	else
 		G.Text = Funcs:GetColorNumberFromBox(G)
 	end
@@ -1556,7 +1738,7 @@ Funcs:TextBoxNumbersOnly(B, 255).FocusLost:Connect(function(Enter)
 		wait(1)
 		SelectedColor = Color3.fromRGB(Funcs:GetColorNumberFromBox(R), Funcs:GetColorNumberFromBox(G), Funcs:GetColorNumberFromBox(B))
 		Funcs:ChangeAllColorsAtOnce(SelectedColor)
-		Funcs:Animate(MainProfile, 1, 'Cubic', 'Out', {BackgroundColor3 = Funcs:GetColorName('Purple', true)}):Play()
+		Funcs:Animate(MainProfile, 1, 'Cubic', 'Out', {BackgroundColor3 = Funcs:GetColorName('Blue', true)}):Play()
 	else
 		B.Text = Funcs:GetColorNumberFromBox(B)
 	end
