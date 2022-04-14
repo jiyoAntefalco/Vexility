@@ -167,7 +167,7 @@ function Funcs:SetUpAnimations()
 		['Fall'] = 656115606,
 	}
 
-	Animations['Toy'] = {
+	--[[Animations['Toy'] = {
 		['Idle'] = 782841498,
 		['IdleTwo'] = 782845736,
 		['Walk'] = 782843345,
@@ -175,9 +175,9 @@ function Funcs:SetUpAnimations()
 		['Jump'] = 782847020,
 		['Climb'] = 782843869,
 		['Fall'] = 782846423,
-	}
+	}]]
 
-	Animations['Zombie'] = {
+	--[[Animations['Zombie'] = {
 		['Idle'] = 616158929,
 		['IdleTwo'] = 616160636,
 		['Walk'] = 616168032,
@@ -185,9 +185,9 @@ function Funcs:SetUpAnimations()
 		['Jump'] = 616161997,
 		['Climb'] = 616156119,
 		['Fall'] = 616157476,
-	}
+	}]]
 	
-	Animations['Werewolf'] = {
+	--[[Animations['Werewolf'] = {
 		['Idle'] = 1083195517,
 		['IdleTwo'] = 1083214717,
 		['Walk'] = 1083178339,
@@ -205,6 +205,46 @@ function Funcs:SetUpAnimations()
 		['Jump'] = 707853694,
 		['Climb'] = 707826056,
 		['Fall'] = 707829716,
+	}]]
+	
+	Animations['Cowboy'] = {
+		['Idle'] = 1014390418,
+		['IdleTwo'] = 1014398616,
+		['Walk'] = 1014421541,
+		['Run'] = 1014401683,
+		['Jump'] = 1014394726,
+		['Climb'] = 1014380606,
+		['Fall'] = 1014384571,
+	}
+	
+	Animations['Sneaky'] = {
+		['Idle'] = 1132473842,
+		['IdleTwo'] = 1132477671,
+		['Walk'] = 1132510133,
+		['Run'] = 1132494274,
+		['Jump'] = 1132489853,
+		['Climb'] = 1132461372,
+		['Fall'] = 1132469004,
+	}
+	
+	Animations['Princess'] = {
+		['Idle'] = 941003647,
+		['IdleTwo'] = 941013098,
+		['Walk'] = 941028902,
+		['Run'] = 941015281,
+		['Jump'] = 941008832,
+		['Climb'] = 940996062,
+		['Fall'] = 941000007,
+	}
+	
+	Animations['Patrol'] = {
+		['Idle'] = 1149612882,
+		['IdleTwo'] = 1150842221,
+		['Walk'] = 1151231493,
+		['Run'] = 1150967949,
+		['Jump'] = 1148811837,
+		['Climb'] = 1148811837,
+		['Fall'] = 1148863382,
 	}
 	
 	local Options = Avatar.Options
