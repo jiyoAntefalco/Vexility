@@ -1,4 +1,4 @@
-if (game.CoreGui:FindFirstChild('Vex')) then print('You already have this.') return end
+if (game.CoreGui:FindFirstChild('Vex')) then warn('You already have this.') return end
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService('RunService')
 local PlayersService = game:GetService('Players')
@@ -10,13 +10,12 @@ local SoundService = game:GetService('SoundService')
 local StatsService = game:GetService('Stats')
 local Ver = '1.3'
 local Source = game:GetObjects('rbxassetid://9316886202')
-local Cloned = Source[1]:Clone()
 
 local GetMouse = PlayersService.LocalPlayer:GetMouse()
 
 local Out = Source[1]
 
-repeat wait() print('Finding Vexility Admin and Vexility Hub....') until Out:FindFirstChild('VexAdmin')
+repeat wait() print('Finding Vexility Admin and Vexility Hub....') until Out:FindFirstChild('VexAdmin') and Out:FindFirstChild('Avatar')
 
 warn('Preparing to load Vexility Hub...')
 
@@ -148,6 +147,13 @@ Library.Settings = {
 
 Cool.IsShutdowned = false
 
+function Funcs:Find(T1, T)
+	if (T1 == T) then
+		return true
+	else
+		return false
+	end
+end
 
 function Funcs:SetUpAnimations()
 	
@@ -204,6 +210,7 @@ function Funcs:SetUpAnimations()
 	local Options = Avatar.Options
 	local AnimationChanger = Options.AnimationChanger
 	local Cools = {}
+	local IsIdleTwo = false
 	
 	for NameOfAnimation, Pack in pairs(Animations) do
 		for TypeAnim, AnimationIDs in pairs(Pack) do
@@ -241,6 +248,7 @@ function Funcs:SetUpAnimations()
 					if (TextBox.Text:match('.') and ConfirmationCoolDown == false) then
 						ConfirmationCoolDown = true
 						local String = TextBox.Text
+						
 						if typeof(tonumber(TextBox.Text) == 'number') then
 							if (PLR.Character) then
 								local Character = PLR.Character
@@ -250,21 +258,25 @@ function Funcs:SetUpAnimations()
 										wait()
 										ConfirmBtn.Text = '...'
 										local Animate = Character:FindFirstChild('Animate')
-										if (Animate:FindFirstChild(TypeAnim:lower())) then
+										if (Animate:FindFirstChild(TypeAnim:lower()) and AnimType ~= 'IdleTwo') then
 											local BJ = Animate:FindFirstChild(TypeAnim:lower())
-											if (BJ:FindFirstChild('Animation1')) then
-												local BJ2 = BJ:FindFirstChild('Animation1')
-												BJ2.AnimationId = 'http://www.roblox.com/asset/?id='..Num
-											elseif (BJ:FindFirstChild('Animation2')) then
-												local BJ2 = BJ:FindFirstChild('Animation1')
-												BJ2.AnimationId = 'http://www.roblox.com/asset/?id='..Num
-											elseif (BJ:FindFirstChild(TypeAnim..'Anim')) then
+											if (BJ:FindFirstChild(TypeAnim..'Anim')) then
 												local BJ2 = BJ:FindFirstChild(TypeAnim..'Anim')
 												BJ2.AnimationId = 'http://www.roblox.com/asset/?id='..Num
+											elseif (TypeAnim == 'Idle') then
+												if (Animate:FindFirstChild(TypeAnim:lower())) then
+													local Idle = Animate:FindFirstChild(TypeAnim:lower()):FindFirstChild('Animation1')
+													Idle.AnimationId = 'http://www.roblox.com/asset/?id='..Num
+												end
+											end
+										elseif (Animate:FindFirstChild('idle') and TypeAnim == 'IdleTwo') then
+											if (Animate:FindFirstChild('idle')) then
+												local Idle2 = Animate:FindFirstChild('idle'):FindFirstChild('Animation2')
+												Idle2.AnimationId = 'http://www.roblox.com/asset/?id='..Num
 											end
 										end
 									end)
-									wait(1)
+									
 									if (Success) then
 										ConfirmBtn.Text = 'Success'
 										wait(2)
@@ -285,7 +297,7 @@ function Funcs:SetUpAnimations()
 							TextBox.TextEditable = true
 							TextBox.Text = ''
 						end
-					else
+					elseif (not TextBox.Text:match('.')) then
 						ConfirmationCoolDown = true
 						TextBox.TextEditable = false
 						TextBox.Text = 'Please Fill The Box.'
@@ -388,8 +400,6 @@ function Funcs:SetGameInfo()
 	GameName.Text = Asset.Name
 	Thumbnail.Image = self:Thumbnail('Game', game.PlaceId)
 
-	Created.Text = (Asset.Created):sub(1, 10)
-
 	Funcs.UniverseId = HttpService:JSONDecode(game:HttpGet("https://api.roblox.com/universes/get-universe-containing-place?placeid="..game.PlaceId))['UniverseId']
 
 	local JSONDecodes = {
@@ -397,12 +407,14 @@ function Funcs:SetGameInfo()
 		Votes = HttpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/votes?universeIds='..self.UniverseId)),
 		Games = HttpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games?universeIds='..self.UniverseId)),
 	}
-
-	Events.ChangeStats = RunService.RenderStepped:Connect(function()
+	
+	setclipboard('https://games.roblox.com/v1/games?universeIds='..self.UniverseId)
+	
+	Events.ChangeStats = nil
+	Events.ChangeStats = RunService.Stepped:Connect(function()
 		wait()
 		pcall(function()
-			GameDescription.Text = Asset.Description
-
+		
 			Favorites.Text = JSONDecodes.Favorites['favoritesCount']..' | '..Funcs:Abbreviate(JSONDecodes.Favorites['favoritesCount'])
 			for i,v in pairs(JSONDecodes.Votes['data']) do
 				UpVotes.Text = v.upVotes..' | '..Funcs:Abbreviate(v.upVotes)
@@ -410,9 +422,14 @@ function Funcs:SetGameInfo()
 			end
 			for i,v in pairs(JSONDecodes.Games['data']) do
 				Actives.Text = v.playing..' | '..Funcs:Abbreviate(v.playing)
+				PlayersCount.Text = v.maxPlayers..' | '..#game.Players:GetChildren()..' Player(s)'
+				GameDescription.Text = v.description
+				
+				local SplitDates = (v.updated):sub(1, 10):split('-')
+				
+				Updated.Text = SplitDates[1]..'/'..SplitDates[2]..'/'..SplitDates[3]
+				Created.Text = v.created
 			end
-
-			PlayersCount.Text = #game.Players:GetChildren().. " Player(s)"
 
 			Ping.Text = string.split(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValueString(), " ")[1]
 
@@ -429,11 +446,14 @@ function Funcs:SetGameInfo()
 				ServerUpTime.Text = hours .. " Hour(s), " .. minutes .. " Minute(s), " .. seconds .. " Second(s)"
 			end
 
-			Updated.Text = (Asset.Updated):sub(1, 10)
-
 			wait(1)
 		end)
 	end)
+	if (Events.ChangeStats) then
+		delay(2.5, function()
+			Funcs:Notify('System Loaded', 'Successfully loaded, Everything is now operating.', 'Check', 3)
+		end)
+	end
 end
 
 function Funcs:Abbreviate(value)
@@ -700,6 +720,7 @@ function Funcs:LoadFrame(io)
 		Funcs:SetGameInfo()
 		Funcs:SetUpdateInfo()
 		Funcs:SetScripts()
+		Funcs:Notify('Loading System', 'You will lag in a bit, Please wait while the operator is loading.', 'Outdated', 4.5)
 		Funcs:AddSound(SoundService, 6958727243)
 	end
 end
@@ -1557,9 +1578,11 @@ Funcs:AddCommandOnList('notify',
 )
 
 Events.RenderStepped = RunService.RenderStepped:Connect(function(Render)
-	local Timer = Time.Timer
-	local Message = Time.Message
-	Funcs:TimeSet(Timer, Message)
+	pcall(function()
+		local Timer = Time.Timer
+		local Message = Time.Message
+		Funcs:TimeSet(Timer, Message)
+	end)
 end)
 
 function Funcs:TriggerCommand(String)
@@ -1835,7 +1858,9 @@ Events.PrefixFocusedEvent = GetMouse.KeyDown:Connect(function(K)
 				if (Buttons:FindFirstChild(c.Name)) then
 					Funcs:Colorize(Buttons:FindFirstChild(c.Name), 'Closed')
 				end
-				Funcs:Visible(c, 'Close')
+				if (c.ClassName ~= 'LocalScript' and c.Name ~= 'Buttons' and c.Name ~= 'LeftButtons' and c.Name ~= 'Secondary' and c.Name ~= VexAdmin.Name) then
+					Funcs:Visible(c, 'Close')
+				end
 			end
 		end
 		Funcs:Visible(VexAdmin, 'Open')
