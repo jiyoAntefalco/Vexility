@@ -1,10 +1,7 @@
 Version = '1.3'
 DateUpdated = '4/13/2022'
 UpdateInformation = [[
-- Smooth Scrolling for Scrolling Frames.
-- Added New Interactions on Right Screen:
-- Statistic,
-- Script Hubs
+- Smooth Scrolling Removed.
 - Added New Animation Changer
 6+ Animations.
 ]]
