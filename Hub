@@ -1479,8 +1479,12 @@ Funcs:AddCommandOnList('f3x',
 		RichText = ('[<font face="Code" color="rgb('..Funcs:GetSelectedColorFromString()..')">'..Prefixes.Prefix..'</font>] f3x'),
 	},
 	function(Speaker)
-		pcall(function() loadstring(game:GetObjects("rbxassetid://6695644299")[1].Source)() end)
-		Funcs:Notify('F3X Building Tool', 'Lended F3X tool, This is a client only Btool that players cannot see.', 'Check', 5.5)
+		if (Speaker.Backpack:FindFirstChild('F3X') or Speaker.Character:FindFirstChild('F3X')) then
+			Funcs:Notify('F3X Building Tool', "It appears you already have this tool, I'm unable to lend you another.", 'Error', 5.5)
+		else
+			pcall(function() loadstring(game:GetObjects("rbxassetid://6695644299")[1].Source)() end)
+			Funcs:Notify('F3X Building Tool', 'Lended F3X tool, This is a client only Btool that players cannot see.', 'Check', 5.5)
+		end
 	end
 )
 
@@ -1898,7 +1902,7 @@ Events.PrefixFocusedEvent = GetMouse.KeyDown:Connect(function(K)
 				if (Buttons:FindFirstChild(c.Name)) then
 					Funcs:Colorize(Buttons:FindFirstChild(c.Name), 'Closed')
 				end
-				if (c.ClassName ~= 'LocalScript' and c.Name ~= 'Buttons' and c.Name ~= 'LeftButtons' and c.Name ~= 'Secondary' and c.Name ~= VexAdmin.Name) then
+				if (c.ClassName ~= 'LocalScript' and c.Name ~= 'Buttons' and c.Name ~= 'LeftButtons' and c.Name ~= 'Secondary' and c.Name ~= VexAdmin.Name and c.Name ~= 'NotificationBox') then
 					Funcs:Visible(c, 'Close')
 				end
 			end
