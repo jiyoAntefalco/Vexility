@@ -9,13 +9,36 @@ local Lighting = game:GetService('Lighting')
 local SoundService = game:GetService('SoundService')
 local StatsService = game:GetService('Stats')
 local Ver = '1.3'
-local Source = game:GetObjects('rbxassetid://9426640320')
 
 local GetMouse = PlayersService.LocalPlayer:GetMouse()
 
-local Out = Source[1]
+local Out
 
-repeat wait() print('Finding Vexility Admin and Vexility Hub....') until Out:FindFirstChild('VexAdmin') and Out:FindFirstChild('Avatar')
+local IDAsset = nil
+
+local Check, Asset = pcall(function()
+	if pcall(function() loadstring(game:HttpGetAsync('https://pastebin.com/raw/7Xu6DHee'))() end) then
+		local Source = game:GetObjects('rbxassetid://'..AID.AssetId)
+		return Source[1]
+	end
+end)
+
+if (Check) then
+	if (Asset ~= nil) then
+		Out = Asset
+		if (Out) then
+			warn('Found GuiObject')
+		end
+	else
+		warn('Unable to find Vexility Admin, returned object was nil.')
+		return script:Destroy()
+	end
+else
+	warn('Unable to find Vexility Admin, returned object was nil.')
+	return script:Destroy()
+end
+
+repeat wait() print('Finding Vexility Admin and Vexility Hub....') until Out
 
 warn('Preparing to load Vexility Hub...')
 
