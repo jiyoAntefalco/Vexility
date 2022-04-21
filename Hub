@@ -382,20 +382,18 @@ function Funcs:ExecuteScriptOnPress(Obj)
 		['OwlHub'] = 'https://raw.githubusercontent.com/CriShoux/OwlHub/master/OwlHub.txt',
 	}
 	local TempCoolDown = false
-	
-	Obj.Execute.Text = 'Execute'
 
 	Obj.Execute.MouseButton1Click:Connect(function()
 		if TempCoolDown == false then
 			TempCoolDown = true
-			Obj.Execute.Text = 'Executing...'
+			Obj.Execute.Text = 'EXECUTING...'
 			pcall(function()
 				local String = STRINGS[Obj.Name]
 				loadstring(game:HttpGet(String, true))()
 			end)
 			wait(2)
 			TempCoolDown = false
-			Obj.Execute.Text = 'Execute'
+			Obj.Execute.Text = 'EXECUTE'
 		end
 	end)
 end
