@@ -382,6 +382,8 @@ function Funcs:ExecuteScriptOnPress(Obj)
 		['OwlHub'] = 'https://raw.githubusercontent.com/CriShoux/OwlHub/master/OwlHub.txt',
 	}
 	local TempCoolDown = false
+	
+	Obj.Execute.Text = 'Execute'
 
 	Obj.Execute.MouseButton1Click:Connect(function()
 		if TempCoolDown == false then
