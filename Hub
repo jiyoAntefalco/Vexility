@@ -463,7 +463,7 @@ function Funcs:SetGameInfo()
 	GameName.Text = Asset.Name
 	Thumbnail.Image = self:Thumbnail('Game', game.PlaceId)
 
-	Funcs.UniverseId = HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/multiget-place-details?placeIds="..game.PlaceId))['UniverseId']
+	Funcs.UniverseId = HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/multiget-place-details?placeIds="..game.PlaceId))['universeId']
 
 	local JSONDecodes = {
 		Favorites = HttpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/'..self.UniverseId..'/favorites/count')),
