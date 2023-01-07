@@ -462,8 +462,30 @@ function Funcs:SetGameInfo()
 	CreatorName.Text = 'By @'..Asset.Creator.Name
 	GameName.Text = Asset.Name
 	Thumbnail.Image = self:Thumbnail('Game', game.PlaceId)
+	
+	local io = {}
 
-	Funcs.UniverseId = HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/multiget-place-details?placeIds="..game.PlaceId))['universeId']
+	local got = nil
+
+	function io:GetUniverseIdByPlaceId(PlaceId : number)
+		local GetInfo = MarketplaceService:GetProductInfo(PlaceId).Name
+		local Link = ("https://games.roblox.com/v1/games/list?StartRows=0&MaxRows=100&NumberOfColumns=5&Keyword="..GetInfo)
+		local Data = game:HttpGet(Link)
+		local JSONDecode = HttpService:JSONDecode(Data)
+		for _, G in pairs(JSONDecode.games) do
+			if (G.placeId == PlaceId) then
+				return G
+			end
+		end
+		return nil
+	end
+
+	got = io:GetUniverseIdByPlaceId(game.PlaceId)
+
+	repeat task.wait(2) warn("Finding UniverseId") until got ~= nil
+	warn("Universe Id Found")
+	
+	Funcs.UniverseId = got.universeId
 
 	local JSONDecodes = {
 		Favorites = HttpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/'..self.UniverseId..'/favorites/count')),
